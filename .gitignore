@@ -1,0 +1,10 @@
+# volatile Gradle files
+/.gradle/
+/build/
+
+# IntelliJ IDEA project files
+/*/out/
+/server/
+*.iml
+*.ipr
+*.iws
