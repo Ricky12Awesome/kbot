@@ -1,32 +1,43 @@
 package me.ricky.discord.bot.kbot
 
+import javafx.scene.paint.Color
 import me.ricky.discord.bot.kbot.command.*
 import org.javacord.api.DiscordApiBuilder
 import org.javacord.api.entity.permission.PermissionType
 
-val TOKEN: String = System.getenv("TOKEN")
-
 fun main(args: Array<String>) {
-    val api = DiscordApiBuilder().setToken(TOKEN).login().join()
-    val commandHandler = CommandHandler()
+  val api = DiscordApiBuilder().setToken(System.getenv("TOKEN")).login().join()
+  val commandHandler = CommandHandler()
 
-    commandHandler.commands["test"] = Test()
+  commandHandler.register(Test())
 
-    api.addMessageCreateListener(commandHandler)
+  api.addMessageCreateListener(commandHandler)
 
 }
 
 class Test : Command {
-    override val name: String = "test"
-    override val description: String = "none"
-    override val usage: List<UsageArgument> = listOf(
-        required("user", "user-id"),
-        optional("amount")
-    )
-    override val aliases: List<String> = listOf()
-    override val permission: PermissionType = PermissionType.ADMINISTRATOR
+  override val name: String = "test"
+  override val description: String = "A Simple test command for stuffs"
+  override val usage: Usage = usage(
+    required("user", "user-id"),
+    optional("amount")
+  )
+  override val aliases: List<String> = listOf()
+  override val permission: PermissionType = PermissionType.ADMINISTRATOR
 
-    override fun CommandEvent.onEvent() {
-        channel.sendMessage("The usage of this command is ${usage()}")
-    }
+  override fun CommandEvent.onEvent() {
+
+    channel.sendEmbedMessage(
+      description = description,
+      author = messageAuthor,
+      color = Color.PURPLE,
+      title = name,
+      fields = listOf(
+        field("Aliases", aliases.joinToString(", ", "[", "]")),
+        field("Usage", "$prefix$name $usage"),
+        field("Permission", permission.name)
+      )
+    )
+
+  }
 }
