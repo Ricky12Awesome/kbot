@@ -25,7 +25,7 @@ fun footer(text: String, iconUrl: String? = null): Footer = text to iconUrl
  * @param value Value of Field
  * @param isInlined If the field should be inline or not
  *
- * @see inlinedField
+ * @see inlineField
  *
  * @return [EmbedField]
  */
@@ -40,7 +40,7 @@ fun field(name: String, value: String, isInlined: Boolean = false): EmbedField =
  *
  * @return an inlined [field]
  */
-fun inlinedField(name: String, value: String): EmbedField = field(name, value, true)
+fun inlineField(name: String, value: String): EmbedField = field(name, value, true)
 
 /**
  *

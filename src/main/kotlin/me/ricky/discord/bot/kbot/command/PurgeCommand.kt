@@ -7,18 +7,39 @@ class PurgeCommand : Command {
   override val permission = PermissionType.MANAGE_MESSAGES
   override val description = "Purge Command"
   override val usage = usage(
-    runAt(exact(2, 4)),
-    required("limit", "user"),
-    optional(
-      required("from-message-id"),
-      required("to-message-id")
-    )
+    runAt(exact(1, 2)),
+    required("limit", "from-message-id"),
+    optional("to-message-id")
   )
 
   override fun CommandEvent.onEvent() {
-    val limit = args[1].toIntOrNull() ?: TODO("Make Exception for this, NOW!")
+    when (runAt) {
+      1 -> purgeAmount()
+      2 -> purgeFromTo()
+    }
+  }
 
+  fun CommandEvent.purgeAmount() {
+    val limit = args[1].toIntOrNull()
+    val from = args[1].toLongOrNull()
 
+    if (limit != null) {
+      if (0 > limit) throw exception("Limit cannot be negative.")
+      channel.getMessages(limit).thenAccept { it.deleteAll() }
+      channel.sendMessage("Deleted `$limit` messages. :ok_hand:")
+    } else if (from != null) {
+      channel.getMessagesBetween(from, messageId).thenAccept { it.deleteAll() }
+      channel.sendMessage("Deleted all messages from `$from` and downward. :ok_hand:")
+    }
+
+  }
+
+  fun CommandEvent.purgeFromTo() {
+    val from = args[1].toLongOrNull() ?: throw TODO("From is null. MAKE A COMMAND EXCEPTION FOR THIS")
+    val to = args[2].toLongOrNull() ?: throw TODO("To is null. MAKE A COMMAND EXCEPTION FOR THIS")
+
+    channel.getMessagesBetween(from, to).thenAccept { it.deleteAll() }
+    channel.sendMessage("Deleted Message from `$from` to `$to` :ok_hand:")
   }
 
 }
