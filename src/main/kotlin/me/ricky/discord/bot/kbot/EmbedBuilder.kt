@@ -43,23 +43,6 @@ fun field(name: String, value: String, isInlined: Boolean = false): EmbedField =
 fun inlineField(name: String, value: String): EmbedField = field(name, value, true)
 
 /**
- *
- * @param str String to check
- * @param name Name of [str]
- * @param throwIfNull If true it will throw an exception
- * @param run Runs if [str] is not blank
- *
- * @throws IllegalStateException if [str] is blank or null if [throwIfNull] is true.
- */
-inline fun checkNotBlank(str: String?, name: String, throwIfNull: Boolean = false, run: () -> Unit = {}) {
-  when {
-    str == null -> if (throwIfNull) throw IllegalStateException("$name cannot be null!")
-    str.isBlank() -> throw IllegalStateException("$name cannot be blank!")
-    else -> run()
-  }
-}
-
-/**
  * Works exactly the same as [embed] but returns [TextChannel.sendMessage] with [embed] passed in.
  *
  * @see embed
@@ -117,25 +100,16 @@ inline fun embed(
   fields: List<EmbedField> = listOf(),
   apply: EmbedBuilder.() -> Unit = {}
 ) = from.apply(apply).apply {
-  checkNotBlank(thumbnailUrl, "ThumbnailUrl") { setThumbnail(thumbnailUrl) }
-  checkNotBlank(description, "Description") { setDescription(description) }
-  checkNotBlank(imageUrl, "ImageUrl") { setImage(imageUrl) }
-  checkNotBlank(title, "Title") { setTitle(title) }
-  checkNotBlank(url, "Url") { setUrl(url) }
-
-  if (timestamp != null) setTimestamp(timestamp)
-  if (color != null) setColor(color.convert())
   if (author != null) setAuthor(author)
-  if (footer != null) {
-    val (_text, _imageUrl) = footer
-    if (_imageUrl != null) setFooter(_text, _imageUrl)
-    else setFooter(_text)
-  }
+  setThumbnail(thumbnailUrl)
+  setDescription(description)
+  setTimestamp(timestamp)
+  setColor(color?.convert())
+  setImage(imageUrl)
+  setTitle(title)
+  setUrl(url)
 
-  fields.forEach {
-    checkNotBlank(it.name, "Name")
-    checkNotBlank(it.value, "Value")
+  setFooter(footer?.first, footer?.second)
 
-    addField(it.name, it.value, it.isInline)
-  }
+  fields.forEach { addField(it.name, it.value, it.isInline) }
 }

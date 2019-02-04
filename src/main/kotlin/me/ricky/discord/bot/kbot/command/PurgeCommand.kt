@@ -3,10 +3,10 @@ package me.ricky.discord.bot.kbot.command
 import org.javacord.api.entity.permission.PermissionType
 
 class PurgeCommand : Command {
-  override val name = "purge"
-  override val permission = PermissionType.MANAGE_MESSAGES
-  override val description = "Purge Command"
-  override val usage = usage(
+  override val name: String = "purge"
+  override val permission: PermissionType = PermissionType.MANAGE_MESSAGES
+  override val description: String = "Purge Command"
+  override val usage: Usage = usage(
     runAt(exact(1, 2)),
     required("limit", "from-message-id"),
     optional("to-message-id")
