@@ -8,3 +8,11 @@ and [Exposed](https://github.com/JetBrains/Exposed) as the SQL Library.
 I'm making this for the fun of it. It's pretty much does what every other bot does. 
 
 This bot is going to be very configurable as well.
+
+# Commands
+- `test` - A test command to test stuff
+- `help` - Gives help about a command
+- `info` - Gives info about the bot
+- `purge` - Purges messages
+- `say` - Tell the bot to say something
+- more coming soon...

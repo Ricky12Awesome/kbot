@@ -1,9 +1,11 @@
 package me.ricky.discord.bot.kbot.command
 
 import javafx.scene.paint.Color
+import me.ricky.discord.bot.kbot.GITHUB_PAGE_COMMANDS
 import me.ricky.discord.bot.kbot.embed
 import me.ricky.discord.bot.kbot.footer
 import me.ricky.discord.bot.kbot.inlineField
+import me.ricky.discord.bot.kbot.sendMessage
 
 class HelpCommand(val commands: Map<String, Command>) : Command {
   override val name: String = "help"
@@ -21,7 +23,7 @@ class HelpCommand(val commands: Map<String, Command>) : Command {
   }
 
   fun CommandEvent.listCommandNames() {
-    channel.sendMessage(commands.keys.joinToString())
+    channel.sendMessage("Please visit <$GITHUB_PAGE_COMMANDS> for a list of commands.")
   }
 
   fun CommandEvent.showHelpForCommand() {

@@ -4,11 +4,15 @@ import me.ricky.discord.bot.kbot.command.Command
 import me.ricky.discord.bot.kbot.command.CommandEvent
 import me.ricky.discord.bot.kbot.command.CommandHandler
 import me.ricky.discord.bot.kbot.command.HelpCommand
+import me.ricky.discord.bot.kbot.command.InfoCommand
 import me.ricky.discord.bot.kbot.command.PurgeCommand
 import me.ricky.discord.bot.kbot.command.SayCommand
 import me.ricky.discord.bot.kbot.command.Usage
 import org.javacord.api.DiscordApiBuilder
 import org.javacord.api.entity.permission.PermissionType
+
+const val GITHUB_PAGE = "https://github.com/Ricky12Awesome/kbot"
+const val GITHUB_PAGE_COMMANDS = "https://github.com/Ricky12Awesome/kbot#Commands"
 
 fun main(args: Array<String>) {
   val api = DiscordApiBuilder().setToken(System.getenv("TOKEN")).login().join()
@@ -18,6 +22,7 @@ fun main(args: Array<String>) {
     Test(),
     SayCommand(),
     PurgeCommand(),
+    InfoCommand(commandHandler.commands),
     HelpCommand(commandHandler.commands)
   )
 
