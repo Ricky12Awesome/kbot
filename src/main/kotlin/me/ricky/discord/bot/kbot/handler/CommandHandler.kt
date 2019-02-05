@@ -1,5 +1,6 @@
-package me.ricky.discord.bot.kbot.command
+package me.ricky.discord.bot.kbot.handler
 
+import me.ricky.discord.bot.kbot.command.Command
 import org.javacord.api.entity.server.Server
 import org.javacord.api.entity.user.User
 import org.javacord.api.event.message.MessageCreateEvent

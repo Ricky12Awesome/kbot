@@ -1,5 +1,6 @@
-package me.ricky.discord.bot.kbot.command
+package me.ricky.discord.bot.kbot.handler
 
+import me.ricky.discord.bot.kbot.command.Command
 import org.javacord.api.entity.channel.TextChannel
 import org.javacord.api.entity.message.Message
 import java.util.concurrent.CompletableFuture
@@ -55,5 +56,9 @@ data class UsageArgument(
  * TODO: Document Usage
  */
 class Usage(from: List<UsageArgument> = listOf(), val runsAt: List<RunAt> = listOf()) : List<UsageArgument> by from {
-  override fun toString(): String = joinToString(" ") { it.format() }
+  override fun toString(): String {
+    val result = joinToString(" ") { it.format() }
+
+    return if (result.isBlank()) "none" else result
+  }
 }

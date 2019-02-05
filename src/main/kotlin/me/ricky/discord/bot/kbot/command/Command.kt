@@ -1,9 +1,16 @@
 package me.ricky.discord.bot.kbot.command
 
 import javafx.scene.paint.Color
-import me.ricky.discord.bot.kbot.embed
-import me.ricky.discord.bot.kbot.footer
-import me.ricky.discord.bot.kbot.inlineField
+import me.ricky.discord.bot.kbot.handler.CommandEvent
+import me.ricky.discord.bot.kbot.handler.RunAt
+import me.ricky.discord.bot.kbot.handler.RunAtType
+import me.ricky.discord.bot.kbot.handler.Usage
+import me.ricky.discord.bot.kbot.handler.UsageArgument
+import me.ricky.discord.bot.kbot.handler.UsageType
+import me.ricky.discord.bot.kbot.util.embed
+import me.ricky.discord.bot.kbot.util.footer
+import me.ricky.discord.bot.kbot.util.inlineField
+import me.ricky.discord.bot.kbot.handler.notEnoughArgs
 import org.javacord.api.entity.permission.PermissionType
 
 /**
@@ -49,7 +56,8 @@ interface Command {
   /**
    * TODO: Document usage
    */
-  fun usage(runsAt: List<RunAt> = listOf(), vararg args: UsageArgument) = Usage(args.toList(), runsAt)
+  fun usage(runsAt: List<RunAt> = listOf(), vararg args: UsageArgument) =
+    Usage(args.toList(), runsAt)
 
   /**
    * TODO: Document usage message
@@ -62,22 +70,28 @@ interface Command {
   /**
    * TODO: Document required
    */
-  fun required(vararg args: String) = UsageArgument(args.toList(), UsageType.REQUIRED)
+  fun required(vararg args: String) =
+    UsageArgument(args.toList(), UsageType.REQUIRED)
 
   /**
    * TODO: Document optional
    */
-  fun optional(vararg args: String) = UsageArgument(args.toList(), UsageType.OPTIONAL)
+  fun optional(vararg args: String) =
+    UsageArgument(args.toList(), UsageType.OPTIONAL)
 
   /**
    * TODO: Document required
    */
-  fun required(vararg args: UsageArgument) = UsageArgument(args.map { it.format() }, UsageType.REQUIRED)
+  fun required(vararg args: UsageArgument) =
+    UsageArgument(args.map { it.format() },
+      UsageType.REQUIRED)
 
   /**
    * TODO: Document optional
    */
-  fun optional(vararg args: UsageArgument) = UsageArgument(args.map { it.format() }, UsageType.OPTIONAL)
+  fun optional(vararg args: UsageArgument) =
+    UsageArgument(args.map { it.format() },
+      UsageType.OPTIONAL)
 
   /**
    * TODO: Document run at

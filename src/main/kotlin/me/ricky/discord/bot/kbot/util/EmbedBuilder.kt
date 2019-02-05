@@ -1,4 +1,4 @@
-package me.ricky.discord.bot.kbot
+package me.ricky.discord.bot.kbot.util
 
 import javafx.scene.paint.Color
 import org.javacord.api.entity.channel.TextChannel
@@ -43,12 +43,12 @@ fun field(name: String, value: String, isInlined: Boolean = false): EmbedField =
 fun inlineField(name: String, value: String): EmbedField = field(name, value, true)
 
 /**
- * Works exactly the same as [embed] but returns [TextChannel.sendMessage] with [embed] passed in.
+ * Works exactly the same as [embed] but returns [TextChannel.send] with [embed] passed in.
  *
  * @see embed
- * @see TextChannel.sendMessage
+ * @see TextChannel.send
  */
-fun TextChannel.sendMessage(
+fun TextChannel.send(
   from: EmbedBuilder = EmbedBuilder(),
   author: MessageAuthor? = null,
   thumbnailUrl: String? = null,
@@ -61,8 +61,19 @@ fun TextChannel.sendMessage(
   url: String? = null,
   fields: List<EmbedField> = listOf(),
   apply: EmbedBuilder.() -> Unit = {}
-): CompletableFuture<Message> = sendMessage(
-  embed(from, author, thumbnailUrl, description, timestamp, imageUrl, footer, title, color, url, fields, apply)
+): CompletableFuture<Message> = send(
+  embed(from,
+    author,
+    thumbnailUrl,
+    description,
+    timestamp,
+    imageUrl,
+    footer,
+    title,
+    color,
+    url,
+    fields,
+    apply)
 )
 
 /**
@@ -81,7 +92,7 @@ fun TextChannel.sendMessage(
  * @param apply apply's code to [EmbedBuilder] just if you where to do [EmbedBuilder.apply].
  * This is called before any other param is called
  *
- * @see sendMessage
+ * @see send
  *
  * @throws IllegalStateException if any values are blank.
  * as in if they're like `title = ""` not if it's like `title = null`

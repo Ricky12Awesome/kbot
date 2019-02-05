@@ -1,5 +1,6 @@
-package me.ricky.discord.bot.kbot.command
+package me.ricky.discord.bot.kbot.handler
 
+import me.ricky.discord.bot.kbot.command.Command
 import org.javacord.api.entity.channel.TextChannel
 import org.javacord.api.entity.message.Message
 import java.util.concurrent.CompletableFuture
@@ -20,19 +21,22 @@ class CommandExceptionHandler
 /**
  * TODO: Document message
  */
-inline fun message(crossinline run: SendFunction) = object : CommandMessage {
+inline fun message(crossinline run: SendFunction) = object :
+  CommandMessage {
   override fun TextChannel.send(command: Command): CompletableFuture<Message> = run(command)
 }
 
 /**
  * TODO: Document exception
  */
-fun exception(msg: String) = CommandException(message { sendMessage(msg) })
+fun exception(msg: String) =
+  CommandException(message { sendMessage(msg) })
 
 /**
  * TODO: Document exception
  */
-inline fun exception(crossinline run: SendFunction) = CommandException(message(run))
+inline fun exception(crossinline run: SendFunction) =
+  CommandException(message(run))
 
 
 /**

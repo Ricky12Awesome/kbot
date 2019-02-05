@@ -1,4 +1,4 @@
-package me.ricky.discord.bot.kbot.database
+package me.ricky.discord.bot.kbot.util
 
 import org.jetbrains.exposed.sql.Table
 
@@ -25,3 +25,7 @@ data class SQLUser(
   val userId: Long,
   val serverId: Long
 )
+
+object LogTable : Table("log_table") {
+
+}

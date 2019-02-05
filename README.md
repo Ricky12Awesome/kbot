@@ -15,5 +15,10 @@ This bot is going to be very configurable as well.
 - `info` - Gives info about the bot
 - `purge` - Deletes messages
 - `say` - Tell the bot to say something
-- `uptime` - Gives the bot uptime
+- `uptime` - Gives the bots uptime
+- `stats` - Gives stats about the server
+- `github` - Gives you a link to this page
 - more coming soon...
+
+# Change Log
+- Nothing yet
