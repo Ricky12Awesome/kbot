@@ -13,6 +13,7 @@ This bot is going to be very configurable as well.
 - `test` - A test command to test stuff
 - `help` - Gives help about a command
 - `info` - Gives info about the bot
-- `purge` - Purges messages
+- `purge` - Deletes messages
 - `say` - Tell the bot to say something
+- `uptime` - Gives the bot uptime
 - more coming soon...
