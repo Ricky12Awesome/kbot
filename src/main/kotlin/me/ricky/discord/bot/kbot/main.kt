@@ -7,12 +7,14 @@ import me.ricky.discord.bot.kbot.command.HelpCommand
 import me.ricky.discord.bot.kbot.command.InfoCommand
 import me.ricky.discord.bot.kbot.command.PurgeCommand
 import me.ricky.discord.bot.kbot.command.SayCommand
+import me.ricky.discord.bot.kbot.command.UptimeCommand
 import me.ricky.discord.bot.kbot.command.Usage
 import org.javacord.api.DiscordApiBuilder
 import org.javacord.api.entity.permission.PermissionType
 
 const val GITHUB_PAGE = "https://github.com/Ricky12Awesome/kbot"
 const val GITHUB_PAGE_COMMANDS = "https://github.com/Ricky12Awesome/kbot#Commands"
+val startTime: Long = System.currentTimeMillis()
 
 fun main(args: Array<String>) {
   val api = DiscordApiBuilder().setToken(System.getenv("TOKEN")).login().join()
@@ -22,6 +24,7 @@ fun main(args: Array<String>) {
     Test(),
     SayCommand(),
     PurgeCommand(),
+    UptimeCommand(),
     InfoCommand(commandHandler.commands),
     HelpCommand(commandHandler.commands)
   )
@@ -32,7 +35,7 @@ fun main(args: Array<String>) {
 class Test : Command {
   override val name: String = "test"
   override val description: String = "A Simple test command for stuffs"
-  override val aliases: List<String> = listOf("t", "testing", "?")
+  override val aliases: List<String> = listOf("t", "testing")
   override val permission: PermissionType = PermissionType.ADMINISTRATOR
   override val usage: Usage = usage(
     runAt(

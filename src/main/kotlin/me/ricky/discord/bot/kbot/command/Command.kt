@@ -1,5 +1,9 @@
 package me.ricky.discord.bot.kbot.command
 
+import javafx.scene.paint.Color
+import me.ricky.discord.bot.kbot.embed
+import me.ricky.discord.bot.kbot.footer
+import me.ricky.discord.bot.kbot.inlineField
 import org.javacord.api.entity.permission.PermissionType
 
 /**
@@ -94,4 +98,21 @@ interface Command {
    * TODO: Document exact or after
    */
   fun exactOrAfter(vararg args: Int) = args.map { it to RunAtType.EXACT_AFTER }
+
+  /**
+   * Gives help about this command
+   *
+   * @return [embed]
+   */
+  fun help() = embed(
+    title = name,
+    color = Color.LIME,
+    description = description,
+    footer = footer(usageMessage()),
+    fields = listOf(
+      inlineField("Aliases", "$aliases"),
+      inlineField("Usage", "$usage"),
+      inlineField("Permission", "$permission")
+    )
+  )
 }

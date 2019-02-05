@@ -4,6 +4,8 @@ import me.ricky.discord.bot.kbot.GITHUB_PAGE
 import me.ricky.discord.bot.kbot.avatarUrl
 import me.ricky.discord.bot.kbot.inlineField
 import me.ricky.discord.bot.kbot.sendMessage
+import me.ricky.discord.bot.kbot.startTime
+import me.ricky.discord.bot.kbot.time
 
 class InfoCommand(val commands: Map<String, Command>) : Command {
   override val name: String = "info"
@@ -16,9 +18,11 @@ class InfoCommand(val commands: Map<String, Command>) : Command {
       thumbnailUrl = api.yourself.avatarUrl,
       fields = listOf(
         inlineField("Commands", "${commands.keys.size}"),
-        inlineField("Author", api.owner.get().name),
+        inlineField("Author", api.owner.join().name),
         inlineField("Language", "Kotlin"),
         inlineField("Discord API", "JavaCord"),
+        inlineField("Server Prefix", prefix),
+        inlineField("Uptime", time(System.currentTimeMillis() - startTime)),
         inlineField("GitHub", GITHUB_PAGE)
       )
     )

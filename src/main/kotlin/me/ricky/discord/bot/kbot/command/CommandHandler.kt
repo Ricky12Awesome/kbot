@@ -55,8 +55,13 @@ class CommandHandler : MessageCreateListener {
     val args = message.content.split(" ")
     val aliases = commandAliases[args[0].removePrefix(prefix)] ?: return
     val command = commands[aliases] ?: return
+    if (args.getOrNull(1) == "-h") {
+      channel.sendMessage(command.help())
+      return
+    }
 
     try {
+
       val runAt = command.canRun(args.lastIndex)
       val event = CommandEvent(this, prefix, server, user, runAt, args)
       command.call(event)

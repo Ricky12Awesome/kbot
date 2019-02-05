@@ -37,3 +37,21 @@ fun TextChannel.sendAsync(message: String): CompletableFuture<Message> =
 
 fun TextChannel.sendAsync(message: EmbedBuilder): CompletableFuture<Message> =
   sendMessage(message).whenComplete(::throwException)
+
+fun msToSecond(num: Number) = num.toLong() / 1000
+fun msToMinute(num: Number) = msToSecond(num) / 60
+fun msToHour(num: Number) = msToMinute(num) / 60
+fun msToDay(num: Number) = msToHour(num) / 24
+val Number.length get() = (Math.floor(Math.log10(toDouble())) + 1).toInt()
+
+fun time(time: Long): String = buildString {
+  val seconds = msToSecond(time) - msToMinute(time) * 60
+  val minutes = msToMinute(time) - msToHour(time) * 60
+  val hours = msToHour(time) - msToDay(time) * 24
+  val days = msToDay(time)
+
+  append(if (days.length == 2) "$days" else "0$days:")
+  append(if (hours.length == 2) "$hours:" else "0$hours:")
+  append(if (minutes.length == 2) "$minutes:" else "0$minutes:")
+  append(if (seconds.length == 2) "$seconds" else "0$seconds")
+}
