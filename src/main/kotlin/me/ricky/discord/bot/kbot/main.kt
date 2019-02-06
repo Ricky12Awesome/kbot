@@ -11,10 +11,14 @@ import me.ricky.discord.bot.kbot.command.UptimeCommand
 import me.ricky.discord.bot.kbot.handler.CommandEvent
 import me.ricky.discord.bot.kbot.handler.CommandHandler
 import me.ricky.discord.bot.kbot.handler.Usage
+import me.ricky.discord.bot.kbot.util.UserTable
+import me.ricky.discord.bot.kbot.util.convert
 import me.ricky.discord.bot.kbot.util.formattedTime
 import me.ricky.discord.bot.kbot.util.send
 import org.javacord.api.DiscordApiBuilder
 import org.javacord.api.entity.permission.PermissionType
+import org.jetbrains.exposed.sql.select
+import kotlin.reflect.KProperty
 
 const val GITHUB_PAGE = "https://github.com/Ricky12Awesome/kbot"
 const val COMMAND_PAGE = "https://github.com/Ricky12Awesome/kbot#Commands"
@@ -47,7 +51,7 @@ class Test : Command {
   override val permission: PermissionType = PermissionType.ADMINISTRATOR
   override val usage: Usage = usage(
     runAt(exactOrAfter(1)),
-    required("user-id"),
+    required("user-reportId"),
     required("time"),
     required("reason...")
   )
@@ -57,25 +61,4 @@ class Test : Command {
 
     channel.send(formattedTime(convert(time)))
   }
-}
-
-fun convert(time: String): Long {
-  var start = 0
-  var result: Long = 0
-
-  fun String.convert(start: Int, end: Int, result: (Long) -> Long) = result(slice(start..end).toLong())
-
-  time.forEachIndexed { index, c ->
-    val next = index - 1
-    val last = index + 1
-    result += when (c.toLowerCase()) {
-      'd' -> time.convert(start.also { start = last }, next) { it * 1000 * 60 * 60 * 24 }
-      'h' -> time.convert(start.also { start = last }, next) { it * 1000 * 60 * 60 }
-      'm' -> time.convert(start.also { start = last }, next) { it * 1000 * 60 }
-      's' -> time.convert(start.also { start = last }, next) { it * 1000 }
-      else -> 0
-    }
-  }
-
-  return result
 }

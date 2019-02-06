@@ -1,6 +1,7 @@
 package me.ricky.discord.bot.kbot.handler
 
 import me.ricky.discord.bot.kbot.command.Command
+import me.ricky.discord.bot.kbot.util.value
 import org.javacord.api.entity.server.Server
 import org.javacord.api.entity.user.User
 import org.javacord.api.event.message.MessageCreateEvent
@@ -51,8 +52,8 @@ class CommandHandler : MessageCreateListener {
 
   private fun MessageCreateEvent.onEvent() {
     val prefix = "!"
-    val user = if (message.userAuthor.isPresent) message.userAuthor.get() else return
-    val server = if (server.isPresent) server.get() else return
+    val user = message.userAuthor.value ?: return
+    val server = server.value ?: return
     val args = message.content.split(" ")
     val aliases = commandAliases[args[0].removePrefix(prefix)] ?: return
     val command = commands[aliases] ?: return
@@ -62,7 +63,6 @@ class CommandHandler : MessageCreateListener {
     }
 
     try {
-
       val runAt = command.canRun(args.lastIndex)
       val event = CommandEvent(this, prefix, server, user, runAt, args)
       command.call(event)

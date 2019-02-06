@@ -11,8 +11,8 @@ class PurgeCommand : Command {
   override val description: String = "Purge Command"
   override val usage: Usage = usage(
     runAt(exact(1, 2)),
-    required("limit", "from-message-id"),
-    optional("to-message-id")
+    required("limit", "from-message-reportId"),
+    optional("to-message-reportId")
   )
 
   override fun CommandEvent.onEvent() {

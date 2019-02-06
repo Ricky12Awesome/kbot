@@ -29,6 +29,10 @@ jar {
     archiveName = "$project.name-${version}.jar"
     destinationDir = file('out/')
 
+    manifest {
+        attributes("Main-Class": "me.ricky.discord.bot.kbot.MainKt")
+    }
+
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     }
