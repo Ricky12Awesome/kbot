@@ -4,7 +4,9 @@
       <w>ftype</w>
       <w>ppre</w>
       <w>psuf</w>
+      <w>sqlite</w>
       <w>unmuted</w>
+      <w>userinfo</w>
     </words>
   </dictionary>
 </component>

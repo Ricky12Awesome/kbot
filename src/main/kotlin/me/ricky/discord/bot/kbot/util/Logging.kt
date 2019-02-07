@@ -2,6 +2,11 @@ package me.ricky.discord.bot.kbot.util
 
 import javafx.scene.paint.Color
 import org.javacord.api.entity.channel.ServerTextChannel
+import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.Transaction
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.statements.InsertStatement
+import org.jetbrains.exposed.sql.transactions.transaction
 
 enum class RoleReportType(override val text: String, override val color: Color) : ReportType {
   ROLE_ADDED("Role Added", Color.MEDIUMPURPLE),
@@ -37,20 +42,22 @@ interface ReportType {
 
 interface ReportMessage {
   val type: ReportType
+  val count: Int
+  val serverId: Long
 
   fun sendTo(channel: ServerTextChannel)
 }
 
 interface ReportReportMessage : ReportMessage {
-  val reportedUserId: Long
-  val reason: String
   override val type: ReportType get() = object : ReportType {
     override val text: String = "Report"
     override val color: Color = Color.LIGHTBLUE
   }
+  val reportedUserId: Long
+  val reason: String
 
   override fun sendTo(channel: ServerTextChannel) {
-    val user = channel.server.getRoleById(reportedUserId).value?.name ?: "Not Found"
+    val user = channel.server.getMemberById(reportedUserId).value?.discriminatedName ?: "Not Found"
 
     channel.send(
       title = type.text,
@@ -60,14 +67,14 @@ interface ReportReportMessage : ReportMessage {
   }
 }
 
-interface RoleMessage : ReportMessage {
+interface RoleReportMessage : ReportMessage {
   override val type: RoleReportType
   val roleId: Long
   val userId: Long
 
   override fun sendTo(channel: ServerTextChannel) {
     val role = channel.server.getRoleById(roleId).value?.name ?: "Not Found"
-    val user = channel.server.getMemberById(userId).value?.name ?: "Not Found"
+    val user = channel.server.getMemberById(userId).value?.discriminatedName ?: "Not Found"
     val msg = when (type) {
       RoleReportType.ROLE_ADDED -> "$role ($roleId) was added to $user ($userId)"
       RoleReportType.ROLE_REMOVED -> "$role ($roleId) was removed from $user ($userId)"
@@ -86,7 +93,7 @@ interface UserReportMessage : ReportMessage {
   val userId: Long
 
   override fun sendTo(channel: ServerTextChannel) {
-    val user = channel.server.getMemberById(userId).value?.name ?: "Not Found"
+    val user = channel.server.getMemberById(userId).value?.discriminatedName ?: "Not Found"
     val msg = when (type) {
       UserReportType.USER_JOINED -> "$user ($userId has joined the server."
       UserReportType.USER_LEFT -> "$user ($userId has left the server."

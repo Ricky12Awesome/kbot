@@ -1,7 +1,13 @@
 package me.ricky.discord.bot.kbot.handler
 
+import javafx.scene.paint.Color
 import me.ricky.discord.bot.kbot.command.Command
+import me.ricky.discord.bot.kbot.util.Member
+import me.ricky.discord.bot.kbot.util.MemberData
+import me.ricky.discord.bot.kbot.util.convert
+import me.ricky.discord.bot.kbot.util.toMember
 import me.ricky.discord.bot.kbot.util.value
+import org.javacord.api.entity.channel.ServerTextChannel
 import org.javacord.api.entity.server.Server
 import org.javacord.api.entity.user.User
 import org.javacord.api.event.message.MessageCreateEvent
@@ -20,8 +26,10 @@ import org.javacord.api.listener.message.MessageCreateListener
 data class CommandEvent(
   val parent: MessageCreateEvent,
   val prefix: String,
+  val serverId: Long,
   val server: Server,
-  val user: User,
+  val channel: ServerTextChannel,
+  val user: Member,
   val runAt: Int,
   val args: List<String>
 ) : MessageCreateEvent by parent
@@ -52,8 +60,9 @@ class CommandHandler : MessageCreateListener {
 
   private fun MessageCreateEvent.onEvent() {
     val prefix = "!"
-    val user = message.userAuthor.value ?: return
     val server = server.value ?: return
+    val channel = channel as? ServerTextChannel ?: return
+    val user = message.userAuthor.value ?: return
     val args = message.content.split(" ")
     val aliases = commandAliases[args[0].removePrefix(prefix)] ?: return
     val command = commands[aliases] ?: return
@@ -64,7 +73,7 @@ class CommandHandler : MessageCreateListener {
 
     try {
       val runAt = command.canRun(args.lastIndex)
-      val event = CommandEvent(this, prefix, server, user, runAt, args)
+      val event = CommandEvent(this, prefix, server.id, server, channel, user.toMember(server), runAt, args)
       command.call(event)
     } catch (throwable: Throwable) {
       handleException(command, throwable)

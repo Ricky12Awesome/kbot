@@ -18,6 +18,9 @@ This bot is going to be very configurable as well.
 - `uptime` - Gives the bots uptime
 - `stats` - Gives stats about the server
 - `github` - Gives you a link to this page
+- `report` - Reports a user.
+- `reports` - Gets reports of a user.
+- `userinfo` = Gives info about a user or yourself
 - more coming soon...
 
 # Change Log
