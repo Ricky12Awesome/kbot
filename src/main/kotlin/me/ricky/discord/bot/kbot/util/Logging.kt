@@ -10,7 +10,7 @@ enum class RoleReportType(override val text: String, override val color: Color) 
 
 enum class UserReportType(override val text: String, override val color: Color) : ReportType {
   USER_JOINED("Joined", Color.CYAN),
-  USER_LEFT("Left", Color.DARKCYAN),
+  USER_LEFT("Left", Color.DARKCYAN)
 }
 
 enum class MessageReportType(override val text: String, override val color: Color) : ReportType {
@@ -41,6 +41,25 @@ interface ReportMessage {
   fun sendTo(channel: ServerTextChannel)
 }
 
+interface ReportReportMessage : ReportMessage {
+  val reportedUserId: Long
+  val reason: String
+  override val type: ReportType get() = object : ReportType {
+    override val text: String = "Report"
+    override val color: Color = Color.LIGHTBLUE
+  }
+
+  override fun sendTo(channel: ServerTextChannel) {
+    val user = channel.server.getRoleById(reportedUserId).value?.name ?: "Not Found"
+
+    channel.send(
+      title = type.text,
+      color = type.color,
+      description = "$user ($reportedUserId) was reported for `$reason`"
+    )
+  }
+}
+
 interface RoleMessage : ReportMessage {
   override val type: RoleReportType
   val roleId: Long
@@ -54,7 +73,11 @@ interface RoleMessage : ReportMessage {
       RoleReportType.ROLE_REMOVED -> "$role ($roleId) was removed from $user ($userId)"
     }
 
-    channel.send(msg)
+    channel.send(
+      title = type.text,
+      color = type.color,
+      description = msg
+    )
   }
 }
 
@@ -130,7 +153,6 @@ interface PunishmentReportMessage : ReportMessage {
     )
   }
 }
-
 
 interface PunishmentCompletedReportMessage : ReportMessage {
   override val type: PunishmentCompletedReportType

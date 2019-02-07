@@ -1,5 +1,10 @@
 package me.ricky.discord.bot.kbot.util
 
+data class Report(
+  override val reportedUserId: Long,
+  override val reason: String
+) : ReportReportMessage
+
 data class RoleReport(
   override val type: RoleReportType,
   override val roleId: Long,

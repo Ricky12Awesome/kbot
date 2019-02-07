@@ -22,6 +22,12 @@ object UserTable : Table("user_table") {
   val currency = double("currency").default(0.0)
 }
 
+object ReportTable : Table("report_table") {
+  val reportId = long("report_id").autoIncrement().primaryKey()
+  val serverId = long("server_id") references ServerTable.serverId
+  val reportedUserId = long("reported_user_id")
+}
+
 object RoleReportTable : Table("role_report_table") {
   val reportId = long("report_id").autoIncrement().primaryKey()
   val serverId = long("server_id") references ServerTable.serverId
