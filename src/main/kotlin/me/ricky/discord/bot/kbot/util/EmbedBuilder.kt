@@ -6,6 +6,7 @@ import org.javacord.api.entity.message.Message
 import org.javacord.api.entity.message.MessageAuthor
 import org.javacord.api.entity.message.embed.EmbedBuilder
 import org.javacord.api.entity.message.embed.EmbedField
+import org.javacord.api.entity.user.User
 import org.javacord.core.entity.message.embed.EmbedFieldImpl
 import java.time.Instant
 import java.util.concurrent.CompletableFuture
@@ -50,7 +51,7 @@ fun inlineField(name: String, value: String): EmbedField = field(name, value, tr
  */
 fun TextChannel.send(
   from: EmbedBuilder = EmbedBuilder(),
-  author: MessageAuthor? = null,
+  author: User? = null,
   thumbnailUrl: String? = null,
   description: String? = null,
   timestamp: Instant? = null,
@@ -99,7 +100,7 @@ fun TextChannel.send(
  */
 inline fun embed(
   from: EmbedBuilder = EmbedBuilder(),
-  author: MessageAuthor? = null,
+  author: User? = null,
   thumbnailUrl: String? = null,
   description: String? = null,
   timestamp: Instant? = null,

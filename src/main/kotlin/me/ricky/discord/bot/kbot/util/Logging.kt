@@ -2,20 +2,15 @@ package me.ricky.discord.bot.kbot.util
 
 import javafx.scene.paint.Color
 import org.javacord.api.entity.channel.ServerTextChannel
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.Transaction
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.statements.InsertStatement
-import org.jetbrains.exposed.sql.transactions.transaction
 
 enum class RoleReportType(override val text: String, override val color: Color) : ReportType {
   ROLE_ADDED("Role Added", Color.MEDIUMPURPLE),
   ROLE_REMOVED("Role Removed", Color.PURPLE),
 }
 
-enum class UserReportType(override val text: String, override val color: Color) : ReportType {
-  USER_JOINED("Joined", Color.CYAN),
-  USER_LEFT("Left", Color.DARKCYAN)
+enum class MemberReportType(override val text: String, override val color: Color) : ReportType {
+  JOINED("Joined", Color.CYAN),
+  LEFT("Left", Color.DARKCYAN)
 }
 
 enum class MessageReportType(override val text: String, override val color: Color) : ReportType {
@@ -25,14 +20,14 @@ enum class MessageReportType(override val text: String, override val color: Colo
 }
 
 enum class PunishmentReportType(override val text: String, override val color: Color) : ReportType {
-  USER_BANNED("Banned", Color.RED),
-  USER_KICKED("Kicked", Color.ORANGE),
-  USER_MUTED("Muted", Color.YELLOW)
+  BANNED("Banned", Color.RED),
+  KICKED("Kicked", Color.ORANGE),
+  MUTED("Muted", Color.YELLOW)
 }
 
 enum class PunishmentCompletedReportType(override val text: String, override val color: Color) : ReportType {
-  USER_UN_BANNED("Unbanned", Color.LIME),
-  USER_UN_MUTED("Unmuted", Color.GREEN)
+  UN_BANNED("Unbanned", Color.LIME),
+  UN_MUTED("Unmuted", Color.GREEN)
 }
 
 interface ReportType {
@@ -42,27 +37,27 @@ interface ReportType {
 
 interface ReportMessage {
   val type: ReportType
-  val count: Int
   val serverId: Long
 
   fun sendTo(channel: ServerTextChannel)
 }
 
 interface ReportReportMessage : ReportMessage {
-  override val type: ReportType get() = object : ReportType {
-    override val text: String = "Report"
-    override val color: Color = Color.LIGHTBLUE
-  }
+  override val type: ReportType
+    get() = object : ReportType {
+      override val text: String = "Report"
+      override val color: Color = Color.LIGHTBLUE
+    }
   val reportedUserId: Long
   val reason: String
 
   override fun sendTo(channel: ServerTextChannel) {
-    val user = channel.server.getMemberById(reportedUserId).value?.discriminatedName ?: "Not Found"
+    val member = channel.server.getMemberById(reportedUserId).value?.discriminatedName ?: "Not Found"
 
     channel.send(
       title = type.text,
       color = type.color,
-      description = "$user ($reportedUserId) was reported for `$reason`"
+      description = "$member ($reportedUserId) was reported for `$reason`"
     )
   }
 }
@@ -70,14 +65,14 @@ interface ReportReportMessage : ReportMessage {
 interface RoleReportMessage : ReportMessage {
   override val type: RoleReportType
   val roleId: Long
-  val userId: Long
+  val memberId: Long
 
   override fun sendTo(channel: ServerTextChannel) {
     val role = channel.server.getRoleById(roleId).value?.name ?: "Not Found"
-    val user = channel.server.getMemberById(userId).value?.discriminatedName ?: "Not Found"
+    val member = channel.server.getMemberById(memberId).value?.discriminatedName ?: "Not Found"
     val msg = when (type) {
-      RoleReportType.ROLE_ADDED -> "$role ($roleId) was added to $user ($userId)"
-      RoleReportType.ROLE_REMOVED -> "$role ($roleId) was removed from $user ($userId)"
+      RoleReportType.ROLE_ADDED -> "$role ($roleId) was added to $member ($memberId)"
+      RoleReportType.ROLE_REMOVED -> "$role ($roleId) was removed from $member ($memberId)"
     }
 
     channel.send(
@@ -88,15 +83,15 @@ interface RoleReportMessage : ReportMessage {
   }
 }
 
-interface UserReportMessage : ReportMessage {
-  override val type: UserReportType
-  val userId: Long
+interface MemberReportMessage : ReportMessage {
+  override val type: MemberReportType
+  val memberId: Long
 
   override fun sendTo(channel: ServerTextChannel) {
-    val user = channel.server.getMemberById(userId).value?.discriminatedName ?: "Not Found"
+    val member = channel.server.getMemberById(memberId).value?.discriminatedName ?: "Not Found"
     val msg = when (type) {
-      UserReportType.USER_JOINED -> "$user ($userId has joined the server."
-      UserReportType.USER_LEFT -> "$user ($userId has left the server."
+      MemberReportType.JOINED -> "$member ($memberId has joined the server."
+      MemberReportType.LEFT -> "$member ($memberId has left the server."
     }
 
     channel.send(
@@ -128,7 +123,7 @@ interface MessageReportMessage : ReportMessage {
     channel.send(
       title = type.text,
       color = type.color,
-      author = message.author,
+      author = message.author.user,
       description = stringList(
         "**Message ID:** $messageId",
         "**Context:** ${message.content}"
@@ -163,13 +158,13 @@ interface PunishmentReportMessage : ReportMessage {
 
 interface PunishmentCompletedReportMessage : ReportMessage {
   override val type: PunishmentCompletedReportType
-  val userId: Long
+  val memberId: Long
 
   override fun sendTo(channel: ServerTextChannel) {
-    val user = channel.server.getMemberById(userId).value?.discriminatedName ?: "Not Found"
+    val member = channel.server.getMemberById(memberId).value?.discriminatedName ?: "Not Found"
     val msg = when (type) {
-      PunishmentCompletedReportType.USER_UN_BANNED -> "$user ($userId) has been unbanned."
-      PunishmentCompletedReportType.USER_UN_MUTED -> "$user ($userId) has been unmuted."
+      PunishmentCompletedReportType.UN_BANNED -> "$member ($memberId) has been unbanned."
+      PunishmentCompletedReportType.UN_MUTED -> "$member ($memberId) has been unmuted."
     }
 
     channel.send(

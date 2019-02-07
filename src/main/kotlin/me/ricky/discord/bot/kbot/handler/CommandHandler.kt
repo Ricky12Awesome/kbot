@@ -1,15 +1,15 @@
 package me.ricky.discord.bot.kbot.handler
 
-import javafx.scene.paint.Color
 import me.ricky.discord.bot.kbot.command.Command
-import me.ricky.discord.bot.kbot.util.Member
-import me.ricky.discord.bot.kbot.util.MemberData
-import me.ricky.discord.bot.kbot.util.convert
+import me.ricky.discord.bot.kbot.util.SQLMember
+import me.ricky.discord.bot.kbot.util.SQLServer
+import me.ricky.discord.bot.kbot.util.ServerData
+import me.ricky.discord.bot.kbot.util.ServerTable
+import me.ricky.discord.bot.kbot.util.sqlSelect
 import me.ricky.discord.bot.kbot.util.toMember
+import me.ricky.discord.bot.kbot.util.toSQL
 import me.ricky.discord.bot.kbot.util.value
 import org.javacord.api.entity.channel.ServerTextChannel
-import org.javacord.api.entity.server.Server
-import org.javacord.api.entity.user.User
 import org.javacord.api.event.message.MessageCreateEvent
 import org.javacord.api.listener.message.MessageCreateListener
 
@@ -19,7 +19,7 @@ import org.javacord.api.listener.message.MessageCreateListener
  * @param parent instance of [MessageCreateEvent] to inherit
  * @param prefix prefix of the command
  * @param server server of the command
- * @param user  user who ran the command
+ * @param member member who ran the command
  * @param runAt what index was the command ran at from [Usage.runsAt]
  * @param args arguments of the command
  */
@@ -27,9 +27,9 @@ data class CommandEvent(
   val parent: MessageCreateEvent,
   val prefix: String,
   val serverId: Long,
-  val server: Server,
+  val server: SQLServer,
   val channel: ServerTextChannel,
-  val user: Member,
+  val member: SQLMember,
   val runAt: Int,
   val args: List<String>
 ) : MessageCreateEvent by parent
@@ -59,12 +59,11 @@ class CommandHandler : MessageCreateListener {
   fun registerAll(vararg commands: Command) = commands.forEach(::register)
 
   private fun MessageCreateEvent.onEvent() {
-    val prefix = "!"
-    val server = server.value ?: return
+    val server = (server.value ?: return).toSQL()
     val channel = channel as? ServerTextChannel ?: return
-    val user = message.userAuthor.value ?: return
+    val user = (message.userAuthor.value ?: return).toMember(server).toSQL()
     val args = message.content.split(" ")
-    val aliases = commandAliases[args[0].removePrefix(prefix)] ?: return
+    val aliases = commandAliases[args[0].removePrefix(server.data.prefix)] ?: return
     val command = commands[aliases] ?: return
     if (args.getOrNull(1) == "-h") {
       channel.sendMessage(command.help())
@@ -73,7 +72,17 @@ class CommandHandler : MessageCreateListener {
 
     try {
       val runAt = command.canRun(args.lastIndex)
-      val event = CommandEvent(this, prefix, server.id, server, channel, user.toMember(server), runAt, args)
+      val event = CommandEvent(
+        parent = this,
+        prefix = server.data.prefix,
+        serverId = server.id,
+        server = server,
+        member = user,
+        channel = channel,
+        runAt = runAt,
+        args = args
+      )
+
       command.call(event)
     } catch (throwable: Throwable) {
       handleException(command, throwable)

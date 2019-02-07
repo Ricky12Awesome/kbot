@@ -1,8 +1,10 @@
 package me.ricky.discord.bot.kbot.util
 
+import com.google.gson.Gson
 import javafx.scene.paint.Color
 import org.javacord.api.entity.channel.TextChannel
 import org.javacord.api.entity.message.Message
+import org.javacord.api.entity.message.MessageAuthor
 import org.javacord.api.entity.message.embed.EmbedBuilder
 import org.javacord.api.entity.server.Server
 import org.javacord.api.entity.user.User
@@ -33,33 +35,36 @@ fun Color.convert(): java.awt.Color = java.awt.Color(
 /**
  * converts [javafx.scene.paint.Color] to [java.awt.Color]
  */
-fun java.awt.Color.convert(): Color = Color.rgb(
-  red,
-  green,
-  blue,
-  alpha / 255.0
-)
+fun java.awt.Color.convert(): Color = Color.rgb(red, green, blue, alpha / 255.0)
+
+inline fun <reified T> Gson.fromJson(json: String) = fromJson(json, T::class.java)
 
 val <T> Optional<T>.value: T? get() = if (isPresent) get() else null
+val MessageAuthor.user get() = asUser().get()
 
-fun <T> throwException(message: T, throwable: Throwable?) = if (throwable != null) throw throwable else Unit
-
+fun <T> throwException(message: T, throwable: Throwable?) {
+  throwable?.printStackTrace()
+}
 fun TextChannel.send(message: String): CompletableFuture<Message> =
   sendMessage(message).whenComplete(::throwException)
 
 fun TextChannel.send(message: EmbedBuilder): CompletableFuture<Message> =
   sendMessage(message).whenComplete(::throwException)
 
-fun User.toMember(server: Server): Member = MemberData(
+fun User.toMember(server: Server): Member = MemberDelegate(
   delegate = this,
   server = server,
   roles = getRoles(server),
   roleColor = getRoleColor(server).value?.convert() ?: Color.TRANSPARENT
 )
 
-fun Server.getMember(id: Long): Member? = getMemberById(id).value?.toMember(this)
+fun Member.toSQL() = SQLMember(this)
+fun Server.toSQL() = SQLServer(this)
 
-fun Member.info() = sql(server.id) {
+fun Server.getMember(id: Long): Member? = getMemberById(id).value?.toMember(this)
+fun Server.getSQLMember(id: Long): SQLMember? = getMember(id)?.toSQL()
+
+fun SQLMember.info() = sqlSelectFirst {
   embed(
     title = "User Info",
     thumbnailUrl = avatarUrl,

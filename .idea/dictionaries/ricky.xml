@@ -2,8 +2,11 @@
   <dictionary name="ricky">
     <words>
       <w>ftype</w>
+      <w>gson</w>
+      <w>modhash</w>
       <w>ppre</w>
       <w>psuf</w>
+      <w>reddit</w>
       <w>sqlite</w>
       <w>unmuted</w>
       <w>userinfo</w>

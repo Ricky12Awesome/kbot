@@ -38,7 +38,7 @@ interface Command {
   fun CommandEvent.onEvent()
 
   /**
-   * Checks if what the user entered is correct usage
+   * Checks if what the member entered is correct usage
    *
    * @param last last index of argument
    */

@@ -7,11 +7,12 @@ import org.javacord.api.entity.user.User
 
 interface Member : User {
   val server: Server
+  val serverId: Long get() = server.id
   val roles: List<Role>
   val roleColor: Color
 }
 
-data class MemberData(
+data class MemberDelegate(
   private val delegate: User,
   override val server: Server,
   override val roles: List<Role>,

@@ -20,7 +20,8 @@ This bot is going to be very configurable as well.
 - `github` - Gives you a link to this page
 - `report` - Reports a user.
 - `reports` - Gets reports of a user.
-- `userinfo` = Gives info about a user or yourself
+- `userinfo` - Gives info about a user or yourself
+- `settings` - Changes settings about the server
 - more coming soon...
 
 # Change Log

@@ -1,8 +1,28 @@
 package me.ricky.discord.bot.kbot.util
 
+data class ServerData(
+  val serverId: Long = 0,
+  val logChannelId: Long = 0,
+  val commandChannelId: Long = 0,
+  val xpScalar: Double = 0.0,
+  val currencyName: String = "",
+  val currencySymbol: String = "",
+  val prefix: String = ""
+)
+
+data class MemberData(
+  val memberId: Long = 0,
+  val serverId: Long = 0,
+  val mutes: Int = 0,
+  val bans: Int = 0,
+  val kicks: Int = 0,
+  val xp: Double = 0.0,
+  val reports: Int = 0,
+  val currency: Double = 0.0
+)
+
 data class Report(
   override val serverId: Long,
-  override val count: Int,
   override val reportedUserId: Long,
   override val reason: String
 ) : ReportReportMessage
@@ -10,22 +30,19 @@ data class Report(
 data class RoleReport(
   override val type: RoleReportType,
   override val serverId: Long,
-  override val count: Int,
   override val roleId: Long,
-  override val userId: Long
+  override val memberId: Long
 ) : RoleReportMessage
 
-data class UserReport(
-  override val type: UserReportType,
+data class MemberReport(
+  override val type: MemberReportType,
   override val serverId: Long,
-  override val count: Int,
-  override val userId: Long
-) : UserReportMessage
+  override val memberId: Long
+) : MemberReportMessage
 
 data class MessageReport(
   override val type: MessageReportType,
   override val serverId: Long,
-  override val count: Int,
   override val channelId: Long,
   override val messageId: Long
 ) : MessageReportMessage
@@ -33,7 +50,6 @@ data class MessageReport(
 data class PunishmentReport(
   override val type: PunishmentReportType,
   override val serverId: Long,
-  override val count: Int,
   override val fromId: Long,
   override val toId: Long,
   override val time: Long,
@@ -43,6 +59,5 @@ data class PunishmentReport(
 data class PunishmentCompleteReport(
   override val type: PunishmentCompletedReportType,
   override val serverId: Long,
-  override val count: Int,
-  override val userId: Long
+  override val memberId: Long
 ) : PunishmentCompletedReportMessage
