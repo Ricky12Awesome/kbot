@@ -9,6 +9,8 @@ I'm making this for the fun of it. It's pretty much does what every other bot do
 
 This bot is going to be very configurable as well.
 
+**Latest Version**: 0.1.0
+
 # Commands
 - `test` - A test command to test stuff
 - `help` - Gives help about a command
@@ -22,7 +24,15 @@ This bot is going to be very configurable as well.
 - `reports` - Gets reports of a user.
 - `userinfo` - Gives info about a user or yourself
 - `settings` - Changes settings about the server
+- `xp` - *In Development*
+- `roleinfo` - Gives info about a role
+- `changelog` - Gives you a link to change log. atm this page.
 - more coming soon...
 
 # Change Log
-- Nothing yet
+- # 0.1.0
+  - Added RoleInfo Command
+  - Added XPLevelHandler (*In Development*)
+  - Improved sql stuff
+  - and some other things. 
+  I'm to lazy to right a change log for this

@@ -32,7 +32,7 @@ class SQLServer(from: Server) : Server by from, SQLData<ServerData>, SQLObject<S
   override val table: ServerTable = ServerTable
   override val where: SqlExpressionBuilder.(ServerTable) -> Op<Boolean> = { it.serverId eq id }
   override val createIfNotExists: ServerTable.() -> Unit = { createIfNotExists(id) }
-  override val data: ServerData = sqlSelectFirst {
+  override var data: ServerData = sqlSelectFirst {
     ServerData(
       commandChannelId = it[commandChannelId],
       currencySymbol = it[currencySymbol],
@@ -46,13 +46,27 @@ class SQLServer(from: Server) : Server by from, SQLData<ServerData>, SQLObject<S
 
   val logChannel = getTextChannelById(data.logChannelId).value
   val commandChannel = getTextChannelById(data.commandChannelId).value
+  val xp = XPLevelHandler(data.xpScalar)
 
 }
 
-class SQLMember(from: Member) : Member by from, SQLObject<MemberTable> {
+class SQLMember(from: Member) : Member by from, SQLData<MemberData>, SQLObject<MemberTable> {
   override val table: MemberTable = MemberTable
   override val where: SqlExpressionBuilder.(MemberTable) -> Op<Boolean> = { it.serverId eq serverId and (it.memberId eq id) }
   override val createIfNotExists: MemberTable.() -> Unit = { createIfNotExists(id, server.id) }
+  val sqlServer = SQLServer(server)
+  override val data: MemberData = sqlSelectFirst {
+    MemberData(
+      serverId = it[serverId],
+      memberId = it[memberId],
+      currency = it[currency],
+      reports = it[reports],
+      kicks = it[reports],
+      mutes = it[mutes],
+      bans = it[bans],
+      xp = it[xp]
+    )
+  }.get()
 }
 
 inline fun <T : Table> SQLObject<T>.sqlInsert(

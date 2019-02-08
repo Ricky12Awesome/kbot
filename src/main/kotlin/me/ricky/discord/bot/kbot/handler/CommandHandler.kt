@@ -5,9 +5,12 @@ import me.ricky.discord.bot.kbot.util.SQLMember
 import me.ricky.discord.bot.kbot.util.SQLServer
 import me.ricky.discord.bot.kbot.util.ServerData
 import me.ricky.discord.bot.kbot.util.ServerTable
+import me.ricky.discord.bot.kbot.util.XPLevelHandler
+import me.ricky.discord.bot.kbot.util.send
 import me.ricky.discord.bot.kbot.util.sqlSelect
 import me.ricky.discord.bot.kbot.util.toMember
 import me.ricky.discord.bot.kbot.util.toSQL
+import me.ricky.discord.bot.kbot.util.user
 import me.ricky.discord.bot.kbot.util.value
 import org.javacord.api.entity.channel.ServerTextChannel
 import org.javacord.api.event.message.MessageCreateEvent
@@ -30,6 +33,7 @@ data class CommandEvent(
   val server: SQLServer,
   val channel: ServerTextChannel,
   val member: SQLMember,
+  val xp: XPLevelHandler,
   val runAt: Int,
   val args: List<String>
 ) : MessageCreateEvent by parent
@@ -59,27 +63,34 @@ class CommandHandler : MessageCreateListener {
   fun registerAll(vararg commands: Command) = commands.forEach(::register)
 
   private fun MessageCreateEvent.onEvent() {
+    if (api.yourself == message.author.user) return
     val server = (server.value ?: return).toSQL()
+    val prefix = server.data.prefix
     val channel = channel as? ServerTextChannel ?: return
     val user = (message.userAuthor.value ?: return).toMember(server).toSQL()
     val args = message.content.split(" ")
     val aliases = commandAliases[args[0].removePrefix(server.data.prefix)] ?: return
     val command = commands[aliases] ?: return
+    if (!args[0].startsWith(prefix)) {
+      channel.send("Please use prefix `$prefix` for commands.")
+      return
+    }
     if (args.getOrNull(1) == "-h") {
-      channel.sendMessage(command.help())
+      channel.send(command.help())
       return
     }
 
     try {
-      val runAt = command.canRun(args.lastIndex)
+      println(args)
       val event = CommandEvent(
         parent = this,
-        prefix = server.data.prefix,
+        prefix = prefix,
         serverId = server.id,
         server = server,
         member = user,
         channel = channel,
-        runAt = runAt,
+        xp = server.xp,
+        runAt = command.canRun(args.lastIndex),
         args = args
       )
 

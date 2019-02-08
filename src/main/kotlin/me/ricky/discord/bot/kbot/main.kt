@@ -2,6 +2,7 @@ package me.ricky.discord.bot.kbot
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import me.ricky.discord.bot.kbot.command.ChangeLogCommand
 import me.ricky.discord.bot.kbot.command.Command
 import me.ricky.discord.bot.kbot.command.GitHubCommand
 import me.ricky.discord.bot.kbot.command.HelpCommand
@@ -9,11 +10,13 @@ import me.ricky.discord.bot.kbot.command.InfoCommand
 import me.ricky.discord.bot.kbot.command.PurgeCommand
 import me.ricky.discord.bot.kbot.command.ReportCommand
 import me.ricky.discord.bot.kbot.command.ReportsCommand
+import me.ricky.discord.bot.kbot.command.RoleInfoCommand
 import me.ricky.discord.bot.kbot.command.SayCommand
 import me.ricky.discord.bot.kbot.command.SettingsCommand
 import me.ricky.discord.bot.kbot.command.StatsCommand
 import me.ricky.discord.bot.kbot.command.UptimeCommand
 import me.ricky.discord.bot.kbot.command.UserInfoCommand
+import me.ricky.discord.bot.kbot.command.XPCommand
 import me.ricky.discord.bot.kbot.handler.CommandEvent
 import me.ricky.discord.bot.kbot.handler.CommandHandler
 import me.ricky.discord.bot.kbot.handler.Usage
@@ -36,10 +39,11 @@ import java.nio.file.Paths
 import java.sql.Connection
 import java.sql.DriverManager
 
-const val COMMAND_PAGE = "https://github.com/Ricky12Awesome/kbot#Commands"
+const val COMMAND_PAGE = "https://github.com/Ricky12Awesome/kbot#commands"
 const val GITHUB_PAGE = "https://github.com/Ricky12Awesome/kbot"
 const val ISSUE_PAGE = "https://github.com/Ricky12Awesome/kbot/issues"
-const val VERSION = "ALPHA-Stage"
+const val CHANGE_LOG = "https://github.com/Ricky12Awesome/kbot#change-log"
+const val VERSION = "0.1.0"
 val startTime: Long = System.currentTimeMillis()
 val gson: Gson = GsonBuilder().setPrettyPrinting().create()
 
@@ -73,15 +77,18 @@ fun main(args: Array<String>) {
 
   commandHandler.registerAll(
     Test(),
+    XPCommand(),
     SayCommand(),
     PurgeCommand(),
-    UptimeCommand(),
     StatsCommand(),
+    UptimeCommand(),
     GitHubCommand(),
     ReportCommand(),
     ReportsCommand(),
     UserInfoCommand(),
     SettingsCommand(),
+    RoleInfoCommand(),
+    ChangeLogCommand(),
     InfoCommand(commandHandler.commands),
     HelpCommand(commandHandler.commands)
   )

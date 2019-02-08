@@ -1,5 +1,6 @@
 package me.ricky.discord.bot.kbot.command
 
+import me.ricky.discord.bot.kbot.CHANGE_LOG
 import me.ricky.discord.bot.kbot.GITHUB_PAGE
 import me.ricky.discord.bot.kbot.ISSUE_PAGE
 import me.ricky.discord.bot.kbot.VERSION
@@ -29,6 +30,7 @@ class InfoCommand(val commands: Map<String, Command>) : Command {
         inlineField("Server Prefix", prefix),
         inlineField("Uptime", shortFormattedTime(time = System.currentTimeMillis() - startTime)),
         inlineField("GitHub", GITHUB_PAGE),
+        inlineField("Change Log", CHANGE_LOG),
         inlineField("Report Bugs", ISSUE_PAGE)
       )
     )
