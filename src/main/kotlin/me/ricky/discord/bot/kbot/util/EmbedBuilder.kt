@@ -62,7 +62,7 @@ fun TextChannel.send(
   url: String? = null,
   fields: List<EmbedField> = listOf(),
   apply: EmbedBuilder.() -> Unit = {}
-): CompletableFuture<Message> = send(
+) = send(
   embed(from,
     author,
     thumbnailUrl,
@@ -79,7 +79,7 @@ fun TextChannel.send(
 
 /**
  *
- * @param from Used to expand upon an instance of an [EmbedBuilder] default value is EmbedBuilder()
+ * @param from Used to expand upon an instance of an [EmbedBuilder] default getValue is EmbedBuilder()
  * @param author sets the author using [EmbedBuilder.setAuthor]
  * @param thumbnailUrl sets the thumbnail url using [EmbedBuilder.setThumbnail]
  * @param description sets the description using [EmbedBuilder.setDescription]

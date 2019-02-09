@@ -3,10 +3,10 @@ package me.ricky.discord.bot.kbot.handler
 import me.ricky.discord.bot.kbot.command.Command
 import org.javacord.api.entity.channel.TextChannel
 import org.javacord.api.entity.message.Message
+import org.javacord.api.event.message.MessageCreateEvent
 import java.util.concurrent.CompletableFuture
 
-val notEnoughArgs = exception("Not Enough Arguments")
-val tooManyArgs = exception("Too Many Arguments")
+val invalidArguments = exception("Invalid Arguments")
 
 /**
  * TODO: Document Command Message
@@ -16,7 +16,21 @@ interface CommandMessage {
   fun call(channel: TextChannel, command: Command) = channel.send(command)
 }
 
-class CommandExceptionHandler
+fun MessageCreateEvent.handleException(command: Command, throwable: Throwable): CompletableFuture<Message> = when (throwable) {
+  is CommandException -> throwable.commandMessage.call(channel, command)
+  else -> {
+    throwable.printStackTrace()
+    channel.sendMessage("An unknown exception has occurred")
+  }
+}
+
+fun CommandEvent.handleException(throwable: Throwable): CompletableFuture<Message> = when (throwable) {
+  is CommandException -> throwable.commandMessage.call(channel, command)
+  else -> {
+    throwable.printStackTrace()
+    channel.sendMessage("An unknown exception has occurred")
+  }
+}
 
 /**
  * TODO: Document message

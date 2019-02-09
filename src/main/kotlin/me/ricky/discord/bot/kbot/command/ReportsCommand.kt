@@ -60,12 +60,13 @@ class ReportsCommand : Command {
       query.orderBy(reportId).limit(5, page * 5).forEachIndexed { index, row ->
         appendln("**(${(index + 1) + (page * 5)}):** ${row[reason]}")
       }
-    }.thenAcceptAsync {
-      channel.send(
-        title = "Reports",
-        author = member,
-        description = toString()
-      )
     }
+
+    channel.send(
+      title = "Reports",
+      author = member,
+      description = toString()
+    )
+
   }
 }

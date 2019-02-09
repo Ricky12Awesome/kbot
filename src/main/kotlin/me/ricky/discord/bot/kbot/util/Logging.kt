@@ -52,7 +52,7 @@ interface ReportReportMessage : ReportMessage {
   val reason: String
 
   override fun sendTo(channel: ServerTextChannel) {
-    val member = channel.server.getMemberById(reportedUserId).value?.discriminatedName ?: "Not Found"
+    val member = channel.server.getMember(reportedUserId)?.discriminatedName ?: "Not Found"
 
     channel.send(
       title = type.text,
@@ -69,7 +69,7 @@ interface RoleReportMessage : ReportMessage {
 
   override fun sendTo(channel: ServerTextChannel) {
     val role = channel.server.getRoleById(roleId).value?.name ?: "Not Found"
-    val member = channel.server.getMemberById(memberId).value?.discriminatedName ?: "Not Found"
+    val member = channel.server.getMember(memberId)?.discriminatedName ?: "Not Found"
     val msg = when (type) {
       RoleReportType.ROLE_ADDED -> "$role ($roleId) was added to $member ($memberId)"
       RoleReportType.ROLE_REMOVED -> "$role ($roleId) was removed from $member ($memberId)"
@@ -88,7 +88,7 @@ interface MemberReportMessage : ReportMessage {
   val memberId: Long
 
   override fun sendTo(channel: ServerTextChannel) {
-    val member = channel.server.getMemberById(memberId).value?.discriminatedName ?: "Not Found"
+    val member = channel.server.getMember(memberId)?.discriminatedName ?: "Not Found"
     val msg = when (type) {
       MemberReportType.JOINED -> "$member ($memberId has joined the server."
       MemberReportType.LEFT -> "$member ($memberId has left the server."
@@ -140,8 +140,8 @@ interface PunishmentReportMessage : ReportMessage {
   val reason: String
 
   override fun sendTo(channel: ServerTextChannel) {
-    val from = channel.server.getMemberById(fromId).value?.discriminatedName ?: "Not Found"
-    val to = channel.server.getMemberById(toId).value?.discriminatedName ?: "Not Found"
+    val from = channel.server.getMember(fromId)?.discriminatedName ?: "Not Found"
+    val to = channel.server.getMember(toId)?.discriminatedName ?: "Not Found"
 
     channel.send(
       title = type.text,
@@ -152,25 +152,6 @@ interface PunishmentReportMessage : ReportMessage {
         "**For:** ${formattedTime(time)}",
         "**Reason:**: $reason"
       )
-    )
-  }
-}
-
-interface PunishmentCompletedReportMessage : ReportMessage {
-  override val type: PunishmentCompletedReportType
-  val memberId: Long
-
-  override fun sendTo(channel: ServerTextChannel) {
-    val member = channel.server.getMemberById(memberId).value?.discriminatedName ?: "Not Found"
-    val msg = when (type) {
-      PunishmentCompletedReportType.UN_BANNED -> "$member ($memberId) has been unbanned."
-      PunishmentCompletedReportType.UN_MUTED -> "$member ($memberId) has been unmuted."
-    }
-
-    channel.send(
-      title = type.text,
-      color = type.color,
-      description = msg
     )
   }
 }

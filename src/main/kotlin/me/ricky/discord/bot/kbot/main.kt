@@ -7,6 +7,7 @@ import me.ricky.discord.bot.kbot.command.Command
 import me.ricky.discord.bot.kbot.command.GitHubCommand
 import me.ricky.discord.bot.kbot.command.HelpCommand
 import me.ricky.discord.bot.kbot.command.InfoCommand
+import me.ricky.discord.bot.kbot.command.MuteCommand
 import me.ricky.discord.bot.kbot.command.PurgeCommand
 import me.ricky.discord.bot.kbot.command.ReportCommand
 import me.ricky.discord.bot.kbot.command.ReportsCommand
@@ -19,15 +20,15 @@ import me.ricky.discord.bot.kbot.command.UserInfoCommand
 import me.ricky.discord.bot.kbot.command.XPCommand
 import me.ricky.discord.bot.kbot.handler.CommandEvent
 import me.ricky.discord.bot.kbot.handler.CommandHandler
+import me.ricky.discord.bot.kbot.handler.PunishmentHandler
 import me.ricky.discord.bot.kbot.handler.Usage
+import me.ricky.discord.bot.kbot.util.MemberReportTable
 import me.ricky.discord.bot.kbot.util.MemberTable
 import me.ricky.discord.bot.kbot.util.MessageReportTable
-import me.ricky.discord.bot.kbot.util.PunishmentCompletedReportTable
 import me.ricky.discord.bot.kbot.util.PunishmentReportTable
 import me.ricky.discord.bot.kbot.util.ReportTable
 import me.ricky.discord.bot.kbot.util.RoleReportTable
 import me.ricky.discord.bot.kbot.util.ServerTable
-import me.ricky.discord.bot.kbot.util.MemberReportTable
 import me.ricky.discord.bot.kbot.util.sql
 import org.javacord.api.DiscordApiBuilder
 import org.javacord.api.entity.permission.PermissionType
@@ -68,12 +69,12 @@ fun main(args: Array<String>) {
       RoleReportTable,
       MemberReportTable,
       MessageReportTable,
-      PunishmentReportTable,
-      PunishmentCompletedReportTable
+      PunishmentReportTable
     )
   }
 
   val commandHandler = CommandHandler()
+  val punishmentHandler = PunishmentHandler(api)
 
   commandHandler.registerAll(
     Test(),
@@ -89,7 +90,8 @@ fun main(args: Array<String>) {
     SettingsCommand(),
     RoleInfoCommand(),
     ChangeLogCommand(),
-    InfoCommand(commandHandler.commands),
+    MuteCommand(punishmentHandler),
+    InfoCommand(commandHandler.commands.size),
     HelpCommand(commandHandler.commands)
   )
 

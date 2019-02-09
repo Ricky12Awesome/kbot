@@ -7,7 +7,7 @@ import me.ricky.discord.bot.kbot.handler.RunAtType
 import me.ricky.discord.bot.kbot.handler.Usage
 import me.ricky.discord.bot.kbot.handler.UsageArgument
 import me.ricky.discord.bot.kbot.handler.UsageType
-import me.ricky.discord.bot.kbot.handler.notEnoughArgs
+import me.ricky.discord.bot.kbot.handler.invalidArguments
 import me.ricky.discord.bot.kbot.util.embed
 import me.ricky.discord.bot.kbot.util.footer
 import me.ricky.discord.bot.kbot.util.inlineField
@@ -47,11 +47,10 @@ interface Command {
 
     usage.runsAt.forEach {
       val (index, type) = it
-      println(listOf(it, last))
       if (type.calc(index, last)) return index
     }
 
-    throw notEnoughArgs
+    throw invalidArguments
   }
 
   /**

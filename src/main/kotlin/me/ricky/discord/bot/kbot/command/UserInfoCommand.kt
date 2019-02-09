@@ -3,7 +3,6 @@ package me.ricky.discord.bot.kbot.command
 import me.ricky.discord.bot.kbot.handler.CommandEvent
 import me.ricky.discord.bot.kbot.handler.Usage
 import me.ricky.discord.bot.kbot.handler.exception
-import me.ricky.discord.bot.kbot.util.getMember
 import me.ricky.discord.bot.kbot.util.getSQLMember
 import me.ricky.discord.bot.kbot.util.info
 import me.ricky.discord.bot.kbot.util.send
@@ -20,13 +19,13 @@ class UserInfoCommand : Command {
   )
 
   override fun CommandEvent.onEvent() {
-    when(runAt) {
-      0 -> member.info().thenAcceptAsync { channel.send(it) }
+    when (runAt) {
+      0 -> channel.send(member.info())
       1 -> {
         val id = args[1].replace(Regex("[@!<>]"), "").toLongOrNull()
           ?: throw exception("Invalid User")
-        val user = server.getSQLMember(id) ?: throw exception("User doesn't exist.")
-        user.info().thenAcceptAsync { channel.send(it) }
+        val member = server.getSQLMember(id) ?: throw exception("User doesn't exist.")
+        channel.send(member.info())
       }
     }
   }

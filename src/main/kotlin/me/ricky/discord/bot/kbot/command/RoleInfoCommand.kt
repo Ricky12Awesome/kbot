@@ -3,11 +3,11 @@ package me.ricky.discord.bot.kbot.command
 import me.ricky.discord.bot.kbot.handler.CommandEvent
 import me.ricky.discord.bot.kbot.handler.Usage
 import me.ricky.discord.bot.kbot.util.info
+import me.ricky.discord.bot.kbot.util.rolesContainingName
 import me.ricky.discord.bot.kbot.util.send
 import org.javacord.api.entity.message.Message
 import org.javacord.api.entity.permission.PermissionType
 import org.javacord.api.entity.permission.Role
-import java.util.concurrent.CompletableFuture
 
 class RoleInfoCommand : Command {
   override val name: String = "roleinfo"
@@ -20,7 +20,7 @@ class RoleInfoCommand : Command {
     val str: String? = if (args.lastIndex >= 1)
       args.slice(1..args.lastIndex).joinToString(" ") else null
     val roles = roles(str)
-    val send: (List<Role>) -> CompletableFuture<Message> = { r ->
+    val send: (List<Role>) -> Message = { r ->
       channel.send("Roles: ${r.joinToString(", ", "```json\n[\n", "\n]\n```") { "\"${it.name}\"" }}")
     }
 
@@ -32,5 +32,5 @@ class RoleInfoCommand : Command {
   }
 
   private fun CommandEvent.roles(name: String? = null): List<Role> =
-    if (name == null) server.roles else server.roles.filter { it.name.toLowerCase().contains(name.toLowerCase()) }
+    if (name == null) server.roles else server.rolesContainingName(name)
 }

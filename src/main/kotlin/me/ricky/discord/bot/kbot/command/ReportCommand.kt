@@ -29,7 +29,7 @@ class ReportCommand : Command {
       ?: throw exception("Invalid User")
     val member = server.getSQLMember(id) ?: throw exception("User doesn't exist.")
     val reason = args.slice(2..args.lastIndex).joinToString(" ")
-    val current = member.sqlSelectFirst { it[reports] }.get()
+    val current = member.sqlSelectFirst { it[reports] }
     val report = Report(server.id, id, reason)
     member.sqlUpdate { it[reports] = current + 1 }
     sql { ReportTable.insert(report) }

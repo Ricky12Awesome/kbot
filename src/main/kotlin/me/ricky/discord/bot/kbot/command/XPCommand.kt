@@ -17,7 +17,8 @@ class XPCommand : Command {
   override fun CommandEvent.onEvent() {
     when (runAt) {
       0 -> channel.send("Xp: ${member.data.xp}, Level: ${xp.xpToLevel(member.data.xp)}")
-      1 -> xp.setXP(member, args[1].toDoubleOrNull() ?: throw exception("Invalid Number")).thenAcceptAsync {
+      1 -> {
+        xp.setXP(member, args[1].toDoubleOrNull() ?: throw exception("Invalid Number"))
         channel.send("xp is now ${args[1]}")
       }
     }

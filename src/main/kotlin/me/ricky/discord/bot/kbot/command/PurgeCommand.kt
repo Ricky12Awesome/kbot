@@ -3,6 +3,7 @@ package me.ricky.discord.bot.kbot.command
 import me.ricky.discord.bot.kbot.handler.CommandEvent
 import me.ricky.discord.bot.kbot.handler.Usage
 import me.ricky.discord.bot.kbot.handler.exception
+import me.ricky.discord.bot.kbot.util.send
 import org.javacord.api.entity.permission.PermissionType
 
 class PurgeCommand : Command {
@@ -29,10 +30,10 @@ class PurgeCommand : Command {
     if (limit != null) {
       if (0 > limit) throw exception("Limit cannot be negative.")
       channel.getMessages(limit).thenAccept { it.deleteAll() }
-      channel.sendMessage("Deleted `$limit` messages. :ok_hand:")
+      channel.send("Deleted `$limit` messages. :ok_hand:")
     } else if (from != null) {
       channel.getMessagesBetween(from, messageId).thenAccept { it.deleteAll() }
-      channel.sendMessage("Deleted all messages from `$from` and downward. :ok_hand:")
+      channel.send("Deleted all messages from `$from` and downward. :ok_hand:")
     }
 
   }

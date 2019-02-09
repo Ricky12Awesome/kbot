@@ -4,7 +4,6 @@ import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.insertIgnore
 import org.jetbrains.exposed.sql.statements.InsertStatement
-import java.util.concurrent.CompletableFuture
 
 interface Insert<T> {
   fun insert(t: T): InsertStatement<*>
@@ -14,17 +13,21 @@ object ServerTable : Insert<ServerData>, Table("server_table") {
   val serverId = long("server_id").primaryKey()
   val logChannelId = long("log_channel_id").default(0)
   val commandChannelId = long("command_channel_id").default(0)
+  val muteRoleId = long("mute_role_id").default(0)
   val xpScalar = double("xp_scalar").default(1.0)
   val currencyName = text("currency_name").default("Money")
   val currencySymbol = varchar("currency_symbol", 1).default("$")
   val prefix = varchar("prefix", 3).default("!")
 
-  fun createIfNotExists(serverId: Long) = insertIgnore { it[this.serverId] = serverId }
+  fun createIfNotExists(serverId: Long) = insert {
+    it[this.serverId] = serverId
+  }
 
   override fun insert(t: ServerData): InsertStatement<Long> = insertIgnore {
     it[serverId] = t.serverId
     it[logChannelId] = t.logChannelId
     it[commandChannelId] = t.commandChannelId
+    it[muteRoleId] = t.muteRoleId
     it[xpScalar] = t.xpScalar
     it[currencyName] = t.currencyName
     it[currencySymbol] = t.currencySymbol
@@ -43,10 +46,7 @@ object MemberTable : Insert<MemberData>, Table("member_table") {
   val reports = integer("reports").default(0)
   val currency = double("currency").default(0.0)
 
-  fun createIfNotExists(userId: Long, serverId: Long) = insertIgnore {
-    it[this.memberId] = userId
-    it[this.serverId] = serverId
-  }
+  fun createIfNotExists(memberId: Long, serverId: Long) = insert(MemberData(memberId, serverId))
 
   override fun insert(t: MemberData): InsertStatement<Long> = insertIgnore {
     it[serverId] = t.serverId
@@ -122,29 +122,18 @@ object PunishmentReportTable : Insert<PunishmentReportMessage>, Table("punishmen
   val fromId = long("from_id") references MemberTable.memberId
   val toId = long("to_id") references MemberTable.memberId
   val type = enumeration("type", PunishmentReportType::class)
+  val isCompleted = bool("is_completed").default(false)
+  val startTime = long("start_time")
   val time = long("time")
   val reason = text("reason")
 
   override fun insert(t: PunishmentReportMessage): InsertStatement<Number> = insert {
+    it[startTime] = System.currentTimeMillis()
     it[serverId] = t.serverId
     it[fromId] = t.fromId
     it[toId] = t.toId
     it[type] = t.type
     it[time] = t.time
     it[reason] = t.reason
-  }
-}
-
-object PunishmentCompletedReportTable : Insert<PunishmentCompletedReportMessage>,
-  Table("punishment_completed_report_table") {
-  val reportId = long("report_id").autoIncrement().primaryKey()
-  val serverId = long("server_id") references ServerTable.serverId
-  val userId = long("member_id") references MemberTable.memberId
-  val type = enumeration("type", PunishmentCompletedReportType::class)
-
-  override fun insert(t: PunishmentCompletedReportMessage): InsertStatement<Number> = insert {
-    it[serverId] = t.serverId
-    it[userId] = t.memberId
-    it[type] = t.type
   }
 }

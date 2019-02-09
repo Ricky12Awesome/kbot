@@ -14,6 +14,6 @@ class ChangeLogCommand : Command {
   override val usage: Usage = usage()
 
   override fun CommandEvent.onEvent() {
-    channel.send("Here's the link to the change log page. $CHANGE_LOG")
+    channel.send("Here's the link to the change log page. <$CHANGE_LOG>")
   }
 }

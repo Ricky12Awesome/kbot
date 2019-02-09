@@ -16,7 +16,6 @@ import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import org.jetbrains.exposed.sql.statements.UpdateStatement
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
-import java.util.concurrent.CompletableFuture
 
 interface SQLData<T> {
   val data: T
@@ -38,14 +37,16 @@ class SQLServer(from: Server) : Server by from, SQLData<ServerData>, SQLObject<S
       currencySymbol = it[currencySymbol],
       logChannelId = it[logChannelId],
       currencyName = it[currencyName],
+      muteRoleId = it[muteRoleId],
       serverId = it[serverId],
       xpScalar = it[xpScalar],
       prefix = it[prefix]
     )
-  }.join()
+  }
 
   val logChannel = getTextChannelById(data.logChannelId).value
   val commandChannel = getTextChannelById(data.commandChannelId).value
+  val muteRoleId = getRoleById(data.muteRoleId).value
   val xp = XPLevelHandler(data.xpScalar)
 
 }
@@ -54,7 +55,6 @@ class SQLMember(from: Member) : Member by from, SQLData<MemberData>, SQLObject<M
   override val table: MemberTable = MemberTable
   override val where: SqlExpressionBuilder.(MemberTable) -> Op<Boolean> = { it.serverId eq serverId and (it.memberId eq id) }
   override val createIfNotExists: MemberTable.() -> Unit = { createIfNotExists(id, server.id) }
-  val sqlServer = SQLServer(server)
   override val data: MemberData = sqlSelectFirst {
     MemberData(
       serverId = it[serverId],
@@ -66,7 +66,10 @@ class SQLMember(from: Member) : Member by from, SQLData<MemberData>, SQLObject<M
       bans = it[bans],
       xp = it[xp]
     )
-  }.get()
+  }
+
+  val sqlServer = SQLServer(server)
+
 }
 
 inline fun <T : Table> SQLObject<T>.sqlInsert(
@@ -118,7 +121,14 @@ inline fun <reified T : Table> sqlSelect(
   crossinline where: SqlExpressionBuilder.(T) -> Op<Boolean>,
   crossinline createIfNotExists: T.() -> Unit = {},
   crossinline returns: T.(Query) -> Unit
-): CompletableFuture<Unit> = sqlSelect<T, Unit>(where, createIfNotExists, returns)
+): Unit = sqlSelect<T, Unit>(where, createIfNotExists, returns)
+
+@JvmName("sqlSelectFirstUnit")
+inline fun <reified T : Table> sqlSelectFirst(
+  crossinline where: SqlExpressionBuilder.(T) -> Op<Boolean>,
+  crossinline createIfNotExists: T.() -> Unit = {},
+  crossinline returns: T.(ResultRow) -> Unit
+): Unit = sqlSelectFirst<T, Unit>(where, createIfNotExists, returns)
 
 inline fun <reified T : Table, R> sqlSelect(
   crossinline where: SqlExpressionBuilder.(T) -> Op<Boolean>,
@@ -128,6 +138,16 @@ inline fun <reified T : Table, R> sqlSelect(
   val table = T::class.objectInstance ?: throw IllegalArgumentException("T Must be an Object.")
   table.createIfNotExists()
   table.returns(table.select { where(table) })
+}
+
+inline fun <reified T : Table, R> sqlSelectFirst(
+  crossinline where: SqlExpressionBuilder.(T) -> Op<Boolean>,
+  crossinline createIfNotExists: T.() -> Unit = {},
+  crossinline returns: T.(ResultRow) -> R
+) = sql {
+  val table = T::class.objectInstance ?: throw IllegalArgumentException("T Must be an Object.")
+  table.createIfNotExists()
+  table.returns(table.select { where(table) }.first())
 }
 
 inline fun <reified T : Table> sqlUpdate(
@@ -140,6 +160,23 @@ inline fun <reified T : Table> sqlUpdate(
   table.update({ where(table) }) { update(it) }
 }
 
+inline fun <reified T : Table> sqlInsert(
+  crossinline createIfNotExists: T.() -> Unit = {},
+  crossinline insert: T.(InsertStatement<Number>) -> Unit
+) = sql {
+  val table = T::class.objectInstance ?: throw IllegalArgumentException("T Must be an Object.")
+  table.createIfNotExists()
+  table.insert { insert(it) }
+}
 
-inline fun <T> sql(crossinline transaction: Transaction.() -> T): CompletableFuture<T> =
-  CompletableFuture.supplyAsync { transaction { transaction() } }.whenComplete(::throwException)
+inline fun <reified T : Table> sqlInsertIgnore(
+  crossinline createIfNotExists: T.() -> Unit = {},
+  crossinline insert: T.(UpdateBuilder<*>) -> Unit
+) = sql {
+  val table = T::class.objectInstance ?: throw IllegalArgumentException("T Must be an Object.")
+  table.createIfNotExists()
+  table.insertIgnore { insert(it) }
+}
+
+
+inline fun <T> sql(crossinline transaction: Transaction.() -> T): T = transaction { transaction() }

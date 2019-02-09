@@ -10,7 +10,6 @@ import org.javacord.api.entity.permission.Role
 import org.javacord.api.entity.server.Server
 import org.javacord.api.entity.user.User
 import java.util.*
-import java.util.concurrent.CompletableFuture
 
 /**
  * short hand for avatar.url.toString()
@@ -49,11 +48,12 @@ val MessageAuthor.user get() = asUser().get()
 fun <T> throwException(message: T, throwable: Throwable?) {
   throwable?.printStackTrace()
 }
-fun TextChannel.send(message: String): CompletableFuture<Message> =
-  sendMessage(message).whenComplete(::throwException)
 
-fun TextChannel.send(message: EmbedBuilder): CompletableFuture<Message> =
-  sendMessage(message).whenComplete(::throwException)
+fun TextChannel.send(message: String): Message =
+  sendMessage(message).join()
+
+fun TextChannel.send(message: EmbedBuilder): Message =
+  sendMessage(message).join()
 
 fun User.toMember(server: Server): Member = MemberDelegate(
   delegate = this,
@@ -67,6 +67,11 @@ fun Server.toSQL() = SQLServer(this)
 
 fun Server.getMember(id: Long): Member? = getMemberById(id).value?.toMember(this)
 fun Server.getSQLMember(id: Long): SQLMember? = getMember(id)?.toSQL()
+
+fun Server.rolesContainingName(name: String): List<Role> = roles.filter {
+  if (it.name.toLowerCase() == name.toLowerCase()) return listOf(it)
+  it.name.toLowerCase().contains(name.toLowerCase())
+}
 
 fun Role.info() = embed(
   title = "Role Info",

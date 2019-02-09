@@ -2,6 +2,7 @@ package me.ricky.discord.bot.kbot.command
 
 import me.ricky.discord.bot.kbot.handler.CommandEvent
 import me.ricky.discord.bot.kbot.handler.Usage
+import me.ricky.discord.bot.kbot.util.send
 import org.javacord.api.entity.permission.PermissionType
 
 class SayCommand : Command {
@@ -15,7 +16,7 @@ class SayCommand : Command {
 
   override fun CommandEvent.onEvent() {
     message.delete()
-    channel.sendMessage(args.slice(1..args.lastIndex).joinToString(" "))
+    channel.send(args.slice(1..args.lastIndex).joinToString(" "))
   }
 
 }

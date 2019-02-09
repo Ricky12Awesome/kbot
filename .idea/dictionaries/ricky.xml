@@ -4,11 +4,13 @@
       <w>ftype</w>
       <w>gson</w>
       <w>modhash</w>
+      <w>permban</w>
       <w>ppre</w>
       <w>psuf</w>
       <w>reddit</w>
       <w>roleinfo</w>
       <w>sqlite</w>
+      <w>tempban</w>
       <w>unmuted</w>
       <w>userinfo</w>
     </words>

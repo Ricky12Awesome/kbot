@@ -4,6 +4,7 @@ import me.ricky.discord.bot.kbot.COMMAND_PAGE
 import me.ricky.discord.bot.kbot.handler.CommandEvent
 import me.ricky.discord.bot.kbot.handler.Usage
 import me.ricky.discord.bot.kbot.handler.exception
+import me.ricky.discord.bot.kbot.util.send
 
 class HelpCommand(val commands: Map<String, Command>) : Command {
   override val name: String = "help"
@@ -22,11 +23,11 @@ class HelpCommand(val commands: Map<String, Command>) : Command {
   }
 
   fun CommandEvent.listCommandNames() {
-    channel.sendMessage("Please visit <$COMMAND_PAGE> for a list of commands.")
+    channel.send("Please visit <$COMMAND_PAGE> for a list of commands.")
   }
 
   fun CommandEvent.showHelpForCommand() {
     val command = commands[args[1]] ?: throw exception("$name doesn't exist. do ${prefix}help for commands")
-    channel.sendMessage(command.help())
+    channel.send(command.help())
   }
 }

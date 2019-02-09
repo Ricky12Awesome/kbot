@@ -23,7 +23,6 @@ class StatsCommand : Command {
         inlineField("Offline", "${server.members.filter { it.status == UserStatus.OFFLINE }.size}"),
         inlineField("Do Not Disturb", "${server.members.filter { it.status == UserStatus.DO_NOT_DISTURB }.size}"),
         inlineField("Away", "${server.members.filter { it.status == UserStatus.IDLE }.size}"),
-        inlineField("Invisible", "${server.members.filter { it.status == UserStatus.INVISIBLE }.size}"),
         inlineField("Channels", "${server.channels.size}"),
         inlineField("Categories", "${server.channelCategories.size}"),
         inlineField("Voice Channels", "${server.voiceChannels.size}"),

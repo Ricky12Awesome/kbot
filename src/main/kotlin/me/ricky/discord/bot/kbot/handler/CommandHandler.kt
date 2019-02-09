@@ -3,11 +3,8 @@ package me.ricky.discord.bot.kbot.handler
 import me.ricky.discord.bot.kbot.command.Command
 import me.ricky.discord.bot.kbot.util.SQLMember
 import me.ricky.discord.bot.kbot.util.SQLServer
-import me.ricky.discord.bot.kbot.util.ServerData
-import me.ricky.discord.bot.kbot.util.ServerTable
 import me.ricky.discord.bot.kbot.util.XPLevelHandler
 import me.ricky.discord.bot.kbot.util.send
-import me.ricky.discord.bot.kbot.util.sqlSelect
 import me.ricky.discord.bot.kbot.util.toMember
 import me.ricky.discord.bot.kbot.util.toSQL
 import me.ricky.discord.bot.kbot.util.user
@@ -15,6 +12,7 @@ import me.ricky.discord.bot.kbot.util.value
 import org.javacord.api.entity.channel.ServerTextChannel
 import org.javacord.api.event.message.MessageCreateEvent
 import org.javacord.api.listener.message.MessageCreateListener
+import java.util.concurrent.CompletableFuture
 
 /**
  * An event for when a command is run
@@ -31,6 +29,7 @@ data class CommandEvent(
   val prefix: String,
   val serverId: Long,
   val server: SQLServer,
+  val command: Command,
   val channel: ServerTextChannel,
   val member: SQLMember,
   val xp: XPLevelHandler,
@@ -80,8 +79,7 @@ class CommandHandler : MessageCreateListener {
       return
     }
 
-    try {
-      println(args)
+    CompletableFuture.supplyAsync {
       val event = CommandEvent(
         parent = this,
         prefix = prefix,
@@ -89,23 +87,14 @@ class CommandHandler : MessageCreateListener {
         server = server,
         member = user,
         channel = channel,
+        command = command,
         xp = server.xp,
         runAt = command.canRun(args.lastIndex),
         args = args
       )
 
       command.call(event)
-    } catch (throwable: Throwable) {
-      handleException(command, throwable)
-    }
-  }
-
-  private fun MessageCreateEvent.handleException(command: Command, throwable: Throwable) = when (throwable) {
-    is CommandException -> throwable.commandMessage.call(channel, command)
-    else -> {
-      throwable.printStackTrace()
-      channel.sendMessage("An unknown exception has occurred")
-    }
+    }.exceptionally { handleException(command, it.cause ?: it) }
   }
 
   override fun onMessageCreate(event: MessageCreateEvent) = event.onEvent()

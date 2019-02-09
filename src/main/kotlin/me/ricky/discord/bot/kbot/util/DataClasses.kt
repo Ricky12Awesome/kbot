@@ -4,6 +4,7 @@ data class ServerData(
   val serverId: Long = 0,
   val logChannelId: Long = 0,
   val commandChannelId: Long = 0,
+  val muteRoleId: Long = 0,
   val xpScalar: Double = 0.0,
   val currencyName: String = "",
   val currencySymbol: String = "",
@@ -55,9 +56,3 @@ data class PunishmentReport(
   override val time: Long,
   override val reason: String
 ) : PunishmentReportMessage
-
-data class PunishmentCompleteReport(
-  override val type: PunishmentCompletedReportType,
-  override val serverId: Long,
-  override val memberId: Long
-) : PunishmentCompletedReportMessage

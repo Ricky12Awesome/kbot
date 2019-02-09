@@ -1,14 +1,20 @@
 package me.ricky.discord.bot.kbot.command
 
 import me.ricky.discord.bot.kbot.handler.CommandEvent
+import me.ricky.discord.bot.kbot.util.MessageResponse
 import me.ricky.discord.bot.kbot.handler.Usage
 import me.ricky.discord.bot.kbot.handler.exception
+import me.ricky.discord.bot.kbot.handler.handleException
 import me.ricky.discord.bot.kbot.util.inlineField
+import me.ricky.discord.bot.kbot.util.rolesContainingName
 import me.ricky.discord.bot.kbot.util.send
 import me.ricky.discord.bot.kbot.util.sqlUpdate
+import me.ricky.discord.bot.kbot.util.stringList
 import me.ricky.discord.bot.kbot.util.toMember
 import me.ricky.discord.bot.kbot.util.value
 import org.javacord.api.entity.permission.PermissionType
+import org.javacord.api.entity.permission.Role
+import java.util.concurrent.TimeUnit
 
 class SettingsCommand : Command {
   override val name: String = "settings"
@@ -19,20 +25,21 @@ class SettingsCommand : Command {
     "prefix",
     "xp-scale",
     "log-channel",
+    "mute-role",
     "currency-name",
     "command-channel",
     "currency-symbol"
   )
 
   override val usage: Usage = usage(
-    exact(0, 2),
+    runAt(exact(0), exactOrAfter(2)),
     required(*options),
     optional("new setting")
   )
 
   override fun CommandEvent.onEvent() {
-    when (runAt) {
-      0 -> {
+    when {
+      runAt == 0 -> {
         channel.send(
           title = "Current Settings",
           color = server.owner.toMember(server).roleColor,
@@ -40,13 +47,14 @@ class SettingsCommand : Command {
             inlineField("Prefix", server.data.prefix),
             inlineField("Log Channel", "${server.logChannel?.mentionTag}"),
             inlineField("Command Channel", "${server.commandChannel?.mentionTag}"),
+            inlineField("Mute Role", "${server.muteRoleId?.mentionTag}"),
             inlineField("XP Scale", "${server.data.xpScalar}"),
             inlineField("Currency Name", server.data.currencyName),
             inlineField("Currency Symbol", server.data.currencySymbol)
           )
         )
       }
-      2 -> run(args[1], args[2]).join()
+      runAt >= 2 -> run(args[1], args.slice(2..args.lastIndex).joinToString(" "))
     }
   }
 
@@ -56,45 +64,74 @@ class SettingsCommand : Command {
     return server.getChannelById(id ?: 0).value?.id ?: throw exception("invalid $name channel")
   }
 
-  fun CommandEvent.run(selected: String, value: String) = server.sqlUpdate { update ->
-    val msg: String = when (selected) {
-      "prefix" -> {
-        val old = server.data.prefix
-        val new = if (value.length < 3) value else throw exception("prefix is too long, max 2 chars")
-        update[prefix] = new
-        "Changed prefix from $old to $new"
+  fun CommandEvent.roleCheck(value: String, callback: (Role) -> Unit) {
+    val roles = server.rolesContainingName(value)
+    val event = MessageResponse<Role, Unit>(
+      api = api,
+      id = member.id,
+      time = 5L to TimeUnit.SECONDS,
+      call = { callback(it) },
+      handle = { handleException(it) },
+      get = {
+        val index = messageContent.toIntOrNull() ?: throw exception("Invalid Number")
+        roles.getOrNull(index) ?: throw exception("That doesn't exist.")
       }
-      "xp-scale" -> {
-        val old = server.data.xpScalar
-        val new = value.toDoubleOrNull() ?: throw exception("xp-scale must be a number.")
-        update[xpScalar] = new
-        "Changed xp-scale from $old to $new"
-      }
-      "log-channel" -> {
-        val old = server.data.logChannelId
-        val new = channelCheck(value, "log")
-        update[logChannelId] = new
-        "Changed log channel from $old to $new"
-      }
-      "command-channel" -> {
-        val old = server.data.commandChannelId
-        val new = channelCheck(value, "command")
-        update[commandChannelId] = new
-        "Changed command channel from $old to $new"
-      }
-      "currency-name" -> {
-        val old = server.data.currencyName
-        update[currencyName] = value
-        "Changed currency name from $old to $value"
-      }
-      "currency-symbol" -> {
-        val old = server.data.currencySymbol
-        val new = if (value.length == 1) value else throw exception("currency-symbol can only contain 1 char.")
-        update[currencySymbol] = new
-        "Changed currency symbol from $old to $new"
-      }
-      else -> throw exception("Invalid Option")
-    }
-    channel.send(msg)
+    )
+
+    channel.send(
+      title = "Select A Role",
+      description = stringList(
+        *roles.mapIndexed { index, role -> "**$index**: ${role.name}" }.toTypedArray(),
+        "You have 5 seconds."
+      )
+    )
+
+    event.execute()
+
   }
+
+  fun CommandEvent.run(selected: String, value: String): Any = when (selected) {
+    "prefix" -> {
+      val old = server.data.prefix
+      val new = if (value.length < 3) value else throw exception("prefix is too long, max 2 chars")
+      server.sqlUpdate { it[prefix] = new }
+      channel.send("Changed prefix from $old to $new")
+    }
+    "xp-scale" -> {
+      val old = server.data.xpScalar
+      val new = value.toDoubleOrNull() ?: throw exception("xp-scale must be a number.")
+      server.sqlUpdate { it[xpScalar] = new }
+      channel.send("Changed xp-scale from $old to $new")
+    }
+    "log-channel" -> {
+      val old = server.data.logChannelId
+      val new = channelCheck(value, "log")
+      server.sqlUpdate { it[logChannelId] = new }
+      channel.send("Changed log channel from $old to $new")
+    }
+    "command-channel" -> {
+      val old = server.data.commandChannelId
+      val new = channelCheck(value, "command")
+      server.sqlUpdate { it[commandChannelId] = new }
+      channel.send("Changed command channel from $old to $new")
+    }
+    "mute-role" -> roleCheck(value) {
+      val old = server.data.muteRoleId
+      server.sqlUpdate { update -> update[muteRoleId] = it.id }
+      channel.send("Changed mute role from $old to ${it.id}")
+    }
+    "currency-name" -> {
+      val old = server.data.currencyName
+      server.sqlUpdate { it[currencyName] = value }
+      channel.send("Changed currency name from $old to $value")
+    }
+    "currency-symbol" -> {
+      val old = server.data.currencySymbol
+      val new = if (value.length == 1) value else throw exception("currency-symbol can only contain 1 char.")
+      server.sqlUpdate { it[currencySymbol] = new }
+      channel.send("Changed currency symbol from $old to $new")
+    }
+    else -> throw exception("Invalid Option")
+  }
+
 }

@@ -80,3 +80,9 @@ fun convert(time: String): Long {
 
   return result
 }
+
+fun convertOrNull(time: String): Long? = try {
+  convert(time)
+} catch (ignore: NumberFormatException) {
+  null
+}

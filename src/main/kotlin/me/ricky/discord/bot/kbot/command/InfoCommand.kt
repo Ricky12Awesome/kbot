@@ -11,7 +11,7 @@ import me.ricky.discord.bot.kbot.util.inlineField
 import me.ricky.discord.bot.kbot.util.send
 import me.ricky.discord.bot.kbot.util.shortFormattedTime
 
-class InfoCommand(val commands: Map<String, Command>) : Command {
+class InfoCommand(val commandCount: Int) : Command {
   override val name: String = "info"
   override val description: String = "Gives info about the bot"
 
@@ -25,7 +25,7 @@ class InfoCommand(val commands: Map<String, Command>) : Command {
         inlineField("Version", VERSION),
         inlineField("Language", "Kotlin"),
         inlineField("Discord API", "JavaCord"),
-        inlineField("Commands", "${commands.keys.size}"),
+        inlineField("Commands", "$commandCount"),
         inlineField("Servers In", "${api.servers.size}"),
         inlineField("Server Prefix", prefix),
         inlineField("Uptime", shortFormattedTime(time = System.currentTimeMillis() - startTime)),
