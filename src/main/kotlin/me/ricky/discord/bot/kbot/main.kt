@@ -44,7 +44,7 @@ const val COMMAND_PAGE = "https://github.com/Ricky12Awesome/kbot#commands"
 const val GITHUB_PAGE = "https://github.com/Ricky12Awesome/kbot"
 const val ISSUE_PAGE = "https://github.com/Ricky12Awesome/kbot/issues"
 const val CHANGE_LOG = "https://github.com/Ricky12Awesome/kbot#change-log"
-const val VERSION = "0.1.0"
+const val VERSION = "0.2.0"
 val startTime: Long = System.currentTimeMillis()
 val gson: Gson = GsonBuilder().setPrettyPrinting().create()
 

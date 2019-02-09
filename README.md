@@ -9,7 +9,7 @@ I'm making this for the fun of it. It's pretty much does what every other bot do
 
 This bot is going to be very configurable as well.
 
-**Latest Version**: 0.1.0
+**Latest Version**: 0.2.0
 
 # Commands
 - `test` - A test command to test stuff
@@ -30,6 +30,9 @@ This bot is going to be very configurable as well.
 - more coming soon...
 
 # Change Log
+- # 0.2.0
+  - Lots of things. to lazy to make a changelog
+  - fixed SQL stuff
 - # 0.1.0
   - Added RoleInfo Command
   - Added XPLevelHandler (*In Development*)

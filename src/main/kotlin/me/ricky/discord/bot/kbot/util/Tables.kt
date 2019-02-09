@@ -19,7 +19,7 @@ object ServerTable : Insert<ServerData>, Table("server_table") {
   val currencySymbol = varchar("currency_symbol", 1).default("$")
   val prefix = varchar("prefix", 3).default("!")
 
-  fun createIfNotExists(serverId: Long) = insert {
+  fun createIfNotExists(serverId: Long) = insertIgnore {
     it[this.serverId] = serverId
   }
 
@@ -37,8 +37,8 @@ object ServerTable : Insert<ServerData>, Table("server_table") {
 }
 
 object MemberTable : Insert<MemberData>, Table("member_table") {
-  val memberId = long("member_id").primaryKey()
-  val serverId = long("server_id") references ServerTable.serverId
+  val memberId = long("member_id").primaryKey(0)
+  val serverId = long("server_id").primaryKey(1) references ServerTable.serverId
   val mutes = integer("mutes").default(0)
   val bans = integer("bans").default(0)
   val kicks = integer("kicks").default(0)
@@ -46,7 +46,10 @@ object MemberTable : Insert<MemberData>, Table("member_table") {
   val reports = integer("reports").default(0)
   val currency = double("currency").default(0.0)
 
-  fun createIfNotExists(memberId: Long, serverId: Long) = insert(MemberData(memberId, serverId))
+  fun createIfNotExists(memberId: Long, serverId: Long) = insertIgnore {
+    it[this.serverId] = serverId
+    it[this.memberId] = memberId
+  }
 
   override fun insert(t: MemberData): InsertStatement<Long> = insertIgnore {
     it[serverId] = t.serverId

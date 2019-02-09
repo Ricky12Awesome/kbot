@@ -3,7 +3,6 @@ package me.ricky.discord.bot.kbot.command
 import me.ricky.discord.bot.kbot.handler.CommandEvent
 import me.ricky.discord.bot.kbot.handler.Usage
 import me.ricky.discord.bot.kbot.handler.exception
-import me.ricky.discord.bot.kbot.util.MemberTable
 import me.ricky.discord.bot.kbot.util.Report
 import me.ricky.discord.bot.kbot.util.ReportTable
 import me.ricky.discord.bot.kbot.util.getSQLMember
@@ -11,7 +10,6 @@ import me.ricky.discord.bot.kbot.util.sql
 import me.ricky.discord.bot.kbot.util.sqlSelectFirst
 import me.ricky.discord.bot.kbot.util.sqlUpdate
 import org.javacord.api.entity.permission.PermissionType
-import org.jetbrains.exposed.sql.update
 
 class ReportCommand : Command {
   override val name: String = "report"
@@ -35,6 +33,4 @@ class ReportCommand : Command {
     sql { ReportTable.insert(report) }
     report.sendTo(channel)
   }
-
-
 }
