@@ -55,10 +55,7 @@ class SQLServer(from: Server) : Server by from, SQLData<ServerData>, SQLObject<S
 class SQLMember(from: Member) : Member by from, SQLData<MemberData>, SQLObject<MemberTable> {
   override val table: MemberTable = MemberTable
   override val where: SqlExpressionBuilder.(MemberTable) -> Op<Boolean> = { it.memberId eq id and (it.serverId eq server.id) }
-  override val createIfNotExists: MemberTable.() -> Unit = {
-    println("called from where: server_id=${server.id}, member_id=$id")
-    createIfNotExists(id, server.id)
-  }
+  override val createIfNotExists: MemberTable.() -> Unit = { createIfNotExists(id, server.id) }
   override val data: MemberData = sqlSelectFirst {
     MemberData(
       serverId = it[serverId],
@@ -99,13 +96,6 @@ inline fun <T : Table, R> SQLObject<T>.sqlSelectFirst(
   crossinline returns: T.(ResultRow) -> R
 ) = sql {
   table.createIfNotExists()
-  if (table is MemberTable) {
-    val query = table.select { where(table) }
-    println("where itself: ${query.where}")
-    println("query itself: ${query.joinToString { "${it[MemberTable.serverId] to it[MemberTable.memberId]}" }}")
-    println("ALL: ")
-    table.selectAll().forEach(::println)
-  }
   table.returns(table.select { where(table) }.first())
 }
 
