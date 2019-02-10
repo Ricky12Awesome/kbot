@@ -1,31 +1,42 @@
-package me.ricky.discord.bot.kbot.util
+package me.ricky.discord.bot.kbot.util.database
 
 import javafx.scene.paint.Color
+import me.ricky.discord.bot.kbot.util.formattedTime
+import me.ricky.discord.bot.kbot.util.getMember
+import me.ricky.discord.bot.kbot.util.send
+import me.ricky.discord.bot.kbot.util.stringList
+import me.ricky.discord.bot.kbot.util.user
+import me.ricky.discord.bot.kbot.util.value
 import org.javacord.api.entity.channel.ServerTextChannel
 
-enum class RoleReportType(override val text: String, override val color: Color) : ReportType {
+enum class RoleReportType(override val text: String, override val color: Color) :
+  ReportType {
   ROLE_ADDED("Role Added", Color.MEDIUMPURPLE),
   ROLE_REMOVED("Role Removed", Color.PURPLE),
 }
 
-enum class MemberReportType(override val text: String, override val color: Color) : ReportType {
+enum class MemberReportType(override val text: String, override val color: Color) :
+  ReportType {
   JOINED("Joined", Color.CYAN),
   LEFT("Left", Color.DARKCYAN)
 }
 
-enum class MessageReportType(override val text: String, override val color: Color) : ReportType {
+enum class MessageReportType(override val text: String, override val color: Color) :
+  ReportType {
   MESSAGE_SENT("Sent", Color.GRAY),
   MESSAGE_EDITED("Edited", Color.DARKGRAY),
   MESSAGE_CLEARED("Cleared", Color.WHITE)
 }
 
-enum class PunishmentReportType(override val text: String, override val color: Color) : ReportType {
+enum class PunishmentReportType(override val text: String, override val color: Color) :
+  ReportType {
   BANNED("Banned", Color.RED),
   KICKED("Kicked", Color.ORANGE),
   MUTED("Muted", Color.YELLOW)
 }
 
-enum class PunishmentCompletedReportType(override val text: String, override val color: Color) : ReportType {
+enum class PunishmentCompletedReportType(override val text: String, override val color: Color) :
+  ReportType {
   UN_BANNED("Unbanned", Color.LIME),
   UN_MUTED("Unmuted", Color.GREEN)
 }

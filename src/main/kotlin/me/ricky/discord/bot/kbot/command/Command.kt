@@ -1,6 +1,7 @@
 package me.ricky.discord.bot.kbot.command
 
 import javafx.scene.paint.Color
+import me.ricky.discord.bot.kbot.handler.CommandCategory
 import me.ricky.discord.bot.kbot.handler.CommandEvent
 import me.ricky.discord.bot.kbot.handler.RunAt
 import me.ricky.discord.bot.kbot.handler.RunAtType
@@ -26,9 +27,10 @@ interface Command {
   val usage: Usage get() = usage()
   val aliases: List<String> get() = emptyList()
   val permission: PermissionType get() = PermissionType.SEND_MESSAGES
+  val category: CommandCategory get() = CommandCategory.OTHER
 
   /**
-   * @param event used to call [CommandEvent.onEvent]
+   * @param event used to callback [CommandEvent.onEvent]
    */
   fun call(event: CommandEvent) = event.onEvent()
 
@@ -94,7 +96,7 @@ interface Command {
       UsageType.OPTIONAL)
 
   /**
-   * TODO: Document run at
+   * TODO: Document call at
    */
   fun runAt(vararg args: List<RunAt>) = args.flatMap { it }
 
@@ -126,7 +128,8 @@ interface Command {
     fields = listOf(
       inlineField("Aliases", "$aliases"),
       inlineField("Usage", "$usage"),
-      inlineField("Permission", "$permission")
+      inlineField("Permission", "$permission"),
+      inlineField("Category", "$category")
     )
   )
 }

@@ -1,8 +1,8 @@
 package me.ricky.discord.bot.kbot.handler
 
 import me.ricky.discord.bot.kbot.command.Command
-import me.ricky.discord.bot.kbot.util.SQLMember
-import me.ricky.discord.bot.kbot.util.SQLServer
+import me.ricky.discord.bot.kbot.util.database.SQLMember
+import me.ricky.discord.bot.kbot.util.database.SQLServer
 import me.ricky.discord.bot.kbot.util.XPLevelHandler
 import me.ricky.discord.bot.kbot.util.send
 import me.ricky.discord.bot.kbot.util.toMember
@@ -14,8 +14,12 @@ import org.javacord.api.event.message.MessageCreateEvent
 import org.javacord.api.listener.message.MessageCreateListener
 import java.util.concurrent.CompletableFuture
 
+enum class CommandCategory {
+  MODERATION, INFORMATION, MANAGEMENT, FUN, OTHER
+}
+
 /**
- * An event for when a command is run
+ * An event for when a command is call
  *
  * @param parent instance of [MessageCreateEvent] to inherit
  * @param prefix prefix of the command

@@ -1,15 +1,19 @@
-package me.ricky.discord.bot.kbot.command
+package me.ricky.discord.bot.kbot.command.information
 
 import me.ricky.discord.bot.kbot.COMMAND_PAGE
+import me.ricky.discord.bot.kbot.command.Command
+import me.ricky.discord.bot.kbot.handler.CommandCategory
 import me.ricky.discord.bot.kbot.handler.CommandEvent
 import me.ricky.discord.bot.kbot.handler.Usage
 import me.ricky.discord.bot.kbot.handler.exception
 import me.ricky.discord.bot.kbot.util.send
 
-class HelpCommand(val commands: Map<String, Command>) : Command {
+class HelpCommand(val commands: Map<String, Command>) :
+  Command {
   override val name: String = "help"
   override val aliases: List<String> = listOf("?")
   override val description: String = "Help Command"
+  override val category: CommandCategory = CommandCategory.INFORMATION
   override val usage: Usage = usage(
     runAt(exact(0, 1)),
     optional("command-name")

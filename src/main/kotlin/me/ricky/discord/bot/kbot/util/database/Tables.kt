@@ -1,4 +1,4 @@
-package me.ricky.discord.bot.kbot.util
+package me.ricky.discord.bot.kbot.util.database
 
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.insert
@@ -20,7 +20,7 @@ object ServerTable : Insert<ServerData>, Table("server_table") {
   val prefix = varchar("prefix", 3).default("!")
 
   fun createIfNotExists(serverId: Long) = insertIgnore {
-    it[this.serverId] = serverId
+    it[ServerTable.serverId] = serverId
   }
 
   override fun insert(t: ServerData): InsertStatement<Long> = insertIgnore {
@@ -47,8 +47,8 @@ object MemberTable : Insert<MemberData>, Table("member_table") {
   val currency = double("currency").default(0.0)
 
   fun createIfNotExists(memberId: Long, serverId: Long) = insertIgnore {
-    it[this.serverId] = serverId
-    it[this.memberId] = memberId
+    it[MemberTable.serverId] = serverId
+    it[MemberTable.memberId] = memberId
   }
 
   override fun insert(t: MemberData): InsertStatement<Long> = insertIgnore {

@@ -1,5 +1,7 @@
-package me.ricky.discord.bot.kbot.command
+package me.ricky.discord.bot.kbot.command.information
 
+import me.ricky.discord.bot.kbot.command.Command
+import me.ricky.discord.bot.kbot.handler.CommandCategory
 import me.ricky.discord.bot.kbot.handler.CommandEvent
 import me.ricky.discord.bot.kbot.util.inlineField
 import me.ricky.discord.bot.kbot.util.send
@@ -8,6 +10,7 @@ import org.javacord.api.entity.user.UserStatus
 class StatsCommand : Command {
   override val name: String = "stats"
   override val description: String = "Gives stats about the server"
+  override val category: CommandCategory = CommandCategory.INFORMATION
 
   override fun CommandEvent.onEvent() {
     channel.send(

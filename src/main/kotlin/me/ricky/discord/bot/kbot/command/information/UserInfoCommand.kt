@@ -1,5 +1,7 @@
-package me.ricky.discord.bot.kbot.command
+package me.ricky.discord.bot.kbot.command.information
 
+import me.ricky.discord.bot.kbot.command.Command
+import me.ricky.discord.bot.kbot.handler.CommandCategory
 import me.ricky.discord.bot.kbot.handler.CommandEvent
 import me.ricky.discord.bot.kbot.handler.Usage
 import me.ricky.discord.bot.kbot.handler.exception
@@ -13,6 +15,7 @@ class UserInfoCommand : Command {
   override val description: String = "Gives information about yourself or a given member"
   override val aliases: List<String> = listOf("ui")
   override val permission: PermissionType = PermissionType.ADMINISTRATOR
+  override val category: CommandCategory = CommandCategory.INFORMATION
   override val usage: Usage = usage(
     exact(0, 1),
     optional("member")

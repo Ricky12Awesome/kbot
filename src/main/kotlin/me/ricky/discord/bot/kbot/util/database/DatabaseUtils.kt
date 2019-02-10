@@ -1,5 +1,8 @@
-package me.ricky.discord.bot.kbot.util
+package me.ricky.discord.bot.kbot.util.database
 
+import me.ricky.discord.bot.kbot.util.Member
+import me.ricky.discord.bot.kbot.util.XPLevelHandler
+import me.ricky.discord.bot.kbot.util.value
 import org.javacord.api.entity.server.Server
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.Query
@@ -11,7 +14,6 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.insertIgnore
 import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.statements.InsertStatement
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import org.jetbrains.exposed.sql.statements.UpdateStatement
@@ -28,10 +30,14 @@ interface SQLObject<T : Table> {
   val createIfNotExists: T.() -> Unit
 }
 
-class SQLServer(from: Server) : Server by from, SQLData<ServerData>, SQLObject<ServerTable> {
+class SQLServer(from: Server) : Server by from,
+  SQLData<ServerData>,
+  SQLObject<ServerTable> {
   override val table: ServerTable = ServerTable
-  override val where: SqlExpressionBuilder.(ServerTable) -> Op<Boolean> = { it.serverId eq id }
-  override val createIfNotExists: ServerTable.() -> Unit = { createIfNotExists(id) }
+  override val where: SqlExpressionBuilder.(ServerTable) -> Op<Boolean> = { ServerTable.serverId eq id }
+  override val createIfNotExists: ServerTable.() -> Unit = {
+    createIfNotExists(id)
+  }
   override var data: ServerData = sqlSelectFirst {
     ServerData(
       commandChannelId = it[commandChannelId],
@@ -47,15 +53,20 @@ class SQLServer(from: Server) : Server by from, SQLData<ServerData>, SQLObject<S
 
   val logChannel = getTextChannelById(data.logChannelId).value
   val commandChannel = getTextChannelById(data.commandChannelId).value
-  val muteRoleId = getRoleById(data.muteRoleId).value
+  val muteRole = getRoleById(data.muteRoleId).value
   val xp = XPLevelHandler(data.xpScalar)
 
 }
 
-class SQLMember(from: Member) : Member by from, SQLData<MemberData>, SQLObject<MemberTable> {
+class SQLMember(from: Member) : Member by from,
+  SQLData<MemberData>,
+  SQLObject<MemberTable> {
   override val table: MemberTable = MemberTable
-  override val where: SqlExpressionBuilder.(MemberTable) -> Op<Boolean> = { it.memberId eq id and (it.serverId eq server.id) }
-  override val createIfNotExists: MemberTable.() -> Unit = { createIfNotExists(id, server.id) }
+  override val where: SqlExpressionBuilder.(MemberTable) -> Op<Boolean> = { MemberTable.memberId eq id and (MemberTable.serverId eq server.id) }
+  override val createIfNotExists: MemberTable.() -> Unit = {
+    createIfNotExists(id,
+      server.id)
+  }
   override val data: MemberData = sqlSelectFirst {
     MemberData(
       serverId = it[serverId],

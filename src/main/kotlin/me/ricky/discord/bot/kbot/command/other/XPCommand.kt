@@ -1,11 +1,11 @@
-package me.ricky.discord.bot.kbot.command
+package me.ricky.discord.bot.kbot.command.other
 
+import me.ricky.discord.bot.kbot.command.Command
 import me.ricky.discord.bot.kbot.handler.CommandEvent
 import me.ricky.discord.bot.kbot.handler.Usage
 import me.ricky.discord.bot.kbot.handler.exception
 import me.ricky.discord.bot.kbot.util.send
 import org.javacord.api.entity.permission.PermissionType
-import java.text.NumberFormat
 
 class XPCommand : Command {
   override val name: String = "xp"

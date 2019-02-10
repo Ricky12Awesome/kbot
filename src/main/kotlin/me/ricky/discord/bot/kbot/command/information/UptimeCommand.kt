@@ -1,5 +1,7 @@
-package me.ricky.discord.bot.kbot.command
+package me.ricky.discord.bot.kbot.command.information
 
+import me.ricky.discord.bot.kbot.command.Command
+import me.ricky.discord.bot.kbot.handler.CommandCategory
 import me.ricky.discord.bot.kbot.handler.CommandEvent
 import me.ricky.discord.bot.kbot.handler.Usage
 import me.ricky.discord.bot.kbot.startTime
@@ -9,8 +11,8 @@ import me.ricky.discord.bot.kbot.util.shortFormattedTime
 
 class UptimeCommand : Command {
   override val name: String = "uptime"
-  override val usage: Usage = usage(runAt(exact(0), exactOrAfter(1)), optional("fake-uptime")
-  )
+  override val usage: Usage = usage(runAt(exact(0), exactOrAfter(1)), optional("fake-uptime"))
+  override val category: CommandCategory = CommandCategory.INFORMATION
 
   override fun CommandEvent.onEvent() {
     val time = when (runAt) {

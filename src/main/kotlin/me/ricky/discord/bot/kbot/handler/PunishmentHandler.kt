@@ -1,17 +1,17 @@
 package me.ricky.discord.bot.kbot.handler
 
-import me.ricky.discord.bot.kbot.util.MemberTable
-import me.ricky.discord.bot.kbot.util.PunishmentReport
-import me.ricky.discord.bot.kbot.util.PunishmentReportTable
-import me.ricky.discord.bot.kbot.util.PunishmentReportType
-import me.ricky.discord.bot.kbot.util.SQLMember
-import me.ricky.discord.bot.kbot.util.SQLServer
-import me.ricky.discord.bot.kbot.util.getMember
+import me.ricky.discord.bot.kbot.util.database.MemberTable
+import me.ricky.discord.bot.kbot.util.database.PunishmentReport
+import me.ricky.discord.bot.kbot.util.database.PunishmentReportTable
+import me.ricky.discord.bot.kbot.util.database.PunishmentReportType
+import me.ricky.discord.bot.kbot.util.database.SQLMember
+import me.ricky.discord.bot.kbot.util.database.SQLServer
+import me.ricky.discord.bot.kbot.util.getSQLMember
 import me.ricky.discord.bot.kbot.util.send
-import me.ricky.discord.bot.kbot.util.sql
-import me.ricky.discord.bot.kbot.util.sqlSelect
-import me.ricky.discord.bot.kbot.util.sqlSelectFirst
-import me.ricky.discord.bot.kbot.util.sqlUpdate
+import me.ricky.discord.bot.kbot.util.database.sql
+import me.ricky.discord.bot.kbot.util.database.sqlSelect
+import me.ricky.discord.bot.kbot.util.database.sqlSelectFirst
+import me.ricky.discord.bot.kbot.util.database.sqlUpdate
 import me.ricky.discord.bot.kbot.util.toSQL
 import org.javacord.api.DiscordApi
 import org.javacord.api.entity.permission.PermissionType
@@ -40,14 +40,16 @@ class PunishmentHandler(val api: DiscordApi) {
         val (type, id, server, member, start, time) = data
         val delta = System.currentTimeMillis() - start
         if (delta >= time) {
-          sqlUpdate<PunishmentReportTable>(where = { it.reportId eq id }) { it[isCompleted] = true }
+          sqlUpdate<PunishmentReportTable>(where = { it.reportId eq id }) {
+            it[isCompleted] = true
+          }
           val msg = when (type) {
             PunishmentReportType.BANNED -> {
               server.unbanUser(member)
               "unbanned"
             }
             PunishmentReportType.MUTED -> {
-              member.removeRole(server.muteRoleId)
+              member.removeRole(server.muteRole)
               "unmuted"
             }
             else -> ""
@@ -62,7 +64,7 @@ class PunishmentHandler(val api: DiscordApi) {
 
   fun PunishmentReportTable.addTimer(row: ResultRow) {
     val sqlServer = api.getServerById(row[serverId]).get().toSQL()
-    val sqlMember = sqlServer.getMember(row[toId])!!.toSQL()
+    val sqlMember = sqlServer.getSQLMember(row[toId])!!
     val data = PunishmentData(
       type = row[type],
       reportId = row[reportId],
@@ -120,7 +122,7 @@ class PunishmentHandler(val api: DiscordApi) {
     if (!to.server.hasPermission(to, PermissionType.ADMINISTRATOR)) when (type) {
       PunishmentReportType.BANNED -> from.server.banUser(to)
       PunishmentReportType.KICKED -> from.server.kickUser(to)
-      PunishmentReportType.MUTED -> to.addRole(from.sqlServer.muteRoleId)
+      PunishmentReportType.MUTED -> to.addRole(from.sqlServer.muteRole)
     }
 
     sql { PunishmentReportTable.insert(report) }

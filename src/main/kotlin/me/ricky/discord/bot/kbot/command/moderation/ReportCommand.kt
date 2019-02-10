@@ -1,14 +1,16 @@
-package me.ricky.discord.bot.kbot.command
+package me.ricky.discord.bot.kbot.command.moderation
 
+import me.ricky.discord.bot.kbot.command.Command
+import me.ricky.discord.bot.kbot.handler.CommandCategory
 import me.ricky.discord.bot.kbot.handler.CommandEvent
 import me.ricky.discord.bot.kbot.handler.Usage
 import me.ricky.discord.bot.kbot.handler.exception
-import me.ricky.discord.bot.kbot.util.Report
-import me.ricky.discord.bot.kbot.util.ReportTable
+import me.ricky.discord.bot.kbot.util.database.Report
+import me.ricky.discord.bot.kbot.util.database.ReportTable
 import me.ricky.discord.bot.kbot.util.getSQLMember
-import me.ricky.discord.bot.kbot.util.sql
-import me.ricky.discord.bot.kbot.util.sqlSelectFirst
-import me.ricky.discord.bot.kbot.util.sqlUpdate
+import me.ricky.discord.bot.kbot.util.database.sql
+import me.ricky.discord.bot.kbot.util.database.sqlSelectFirst
+import me.ricky.discord.bot.kbot.util.database.sqlUpdate
 import org.javacord.api.entity.permission.PermissionType
 
 class ReportCommand : Command {
@@ -16,6 +18,7 @@ class ReportCommand : Command {
   override val description: String = "Reports a member."
   override val aliases: List<String> = listOf()
   override val permission: PermissionType = PermissionType.ADMINISTRATOR
+  override val category: CommandCategory = CommandCategory.MODERATION
   override val usage: Usage = usage(
     exactOrAfter(2),
     required("report-member"),

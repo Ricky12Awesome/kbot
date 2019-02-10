@@ -2,6 +2,10 @@ package me.ricky.discord.bot.kbot.util
 
 import com.google.gson.Gson
 import javafx.scene.paint.Color
+import me.ricky.discord.bot.kbot.util.database.SQLMember
+import me.ricky.discord.bot.kbot.util.database.SQLServer
+import me.ricky.discord.bot.kbot.util.database.sqlSelectFirst
+import org.javacord.api.DiscordApi
 import org.javacord.api.entity.channel.TextChannel
 import org.javacord.api.entity.message.Message
 import org.javacord.api.entity.message.MessageAuthor
@@ -9,6 +13,7 @@ import org.javacord.api.entity.message.embed.EmbedBuilder
 import org.javacord.api.entity.permission.Role
 import org.javacord.api.entity.server.Server
 import org.javacord.api.entity.user.User
+import java.io.Reader
 import java.util.*
 
 /**
@@ -40,7 +45,8 @@ fun java.awt.Color.convert(): Color = Color.rgb(red, green, blue, alpha / 255.0)
 fun java.awt.Color.rgb(): String = "$red/$green/$blue"
 fun Color.rgb(): String = convert().rgb()
 
-inline fun <reified T> Gson.fromJson(json: String) = fromJson(json, T::class.java)
+inline fun <reified T> Gson.fromJson(json: String): T = fromJson(json, T::class.java)
+inline fun <reified T> Gson.fromJson(json: Reader): T = fromJson(json, T::class.java)
 
 val <T> Optional<T>.value: T? get() = if (isPresent) get() else null
 val MessageAuthor.user get() = asUser().get()
@@ -64,6 +70,7 @@ fun User.toMember(server: Server): Member = MemberDelegate(
 
 fun Member.toSQL() = SQLMember(this)
 fun Server.toSQL() = SQLServer(this)
+fun DiscordApi.getSQLServer(id: Long) = getServerById(id).value?.toSQL()
 
 fun Server.getMember(id: Long): Member? = getMemberById(id).value?.toMember(this)
 fun Server.getSQLMember(id: Long): SQLMember? = getMember(id)?.toSQL()

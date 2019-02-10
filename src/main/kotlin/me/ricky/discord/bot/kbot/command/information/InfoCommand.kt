@@ -1,9 +1,11 @@
-package me.ricky.discord.bot.kbot.command
+package me.ricky.discord.bot.kbot.command.information
 
 import me.ricky.discord.bot.kbot.CHANGE_LOG
 import me.ricky.discord.bot.kbot.GITHUB_PAGE
 import me.ricky.discord.bot.kbot.ISSUE_PAGE
 import me.ricky.discord.bot.kbot.VERSION
+import me.ricky.discord.bot.kbot.command.Command
+import me.ricky.discord.bot.kbot.handler.CommandCategory
 import me.ricky.discord.bot.kbot.handler.CommandEvent
 import me.ricky.discord.bot.kbot.startTime
 import me.ricky.discord.bot.kbot.util.avatarUrl
@@ -14,6 +16,7 @@ import me.ricky.discord.bot.kbot.util.shortFormattedTime
 class InfoCommand(val commandCount: Int) : Command {
   override val name: String = "info"
   override val description: String = "Gives info about the bot"
+  override val category: CommandCategory = CommandCategory.INFORMATION
 
   override fun CommandEvent.onEvent() {
     channel.send(

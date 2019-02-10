@@ -1,13 +1,15 @@
-package me.ricky.discord.bot.kbot.command
+package me.ricky.discord.bot.kbot.command.information
 
+import me.ricky.discord.bot.kbot.command.Command
+import me.ricky.discord.bot.kbot.handler.CommandCategory
 import me.ricky.discord.bot.kbot.handler.CommandEvent
 import me.ricky.discord.bot.kbot.handler.Usage
 import me.ricky.discord.bot.kbot.handler.exception
-import me.ricky.discord.bot.kbot.util.ReportTable
-import me.ricky.discord.bot.kbot.util.SQLMember
+import me.ricky.discord.bot.kbot.util.database.ReportTable
+import me.ricky.discord.bot.kbot.util.database.SQLMember
 import me.ricky.discord.bot.kbot.util.getSQLMember
 import me.ricky.discord.bot.kbot.util.send
-import me.ricky.discord.bot.kbot.util.sqlSelect
+import me.ricky.discord.bot.kbot.util.database.sqlSelect
 import org.javacord.api.entity.permission.PermissionType
 
 class ReportsCommand : Command {
@@ -15,6 +17,7 @@ class ReportsCommand : Command {
   override val description: String = "Gives list of reports for a member"
   override val aliases: List<String> = listOf()
   override val permission: PermissionType = PermissionType.ADMINISTRATOR
+  override val category: CommandCategory = CommandCategory.INFORMATION
   override val usage: Usage = usage(
     exact(0, 1, 2),
     optional("member", "page"),

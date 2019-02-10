@@ -1,5 +1,7 @@
-package me.ricky.discord.bot.kbot.command
+package me.ricky.discord.bot.kbot.command.moderation
 
+import me.ricky.discord.bot.kbot.command.Command
+import me.ricky.discord.bot.kbot.handler.CommandCategory
 import me.ricky.discord.bot.kbot.handler.CommandEvent
 import me.ricky.discord.bot.kbot.handler.Usage
 import me.ricky.discord.bot.kbot.handler.exception
@@ -9,6 +11,7 @@ import org.javacord.api.entity.permission.PermissionType
 class PurgeCommand : Command {
   override val name: String = "purge"
   override val permission: PermissionType = PermissionType.MANAGE_MESSAGES
+  override val category: CommandCategory = CommandCategory.MODERATION
   override val description: String = "Purge Command"
   override val usage: Usage = usage(
     runAt(exact(1, 2)),

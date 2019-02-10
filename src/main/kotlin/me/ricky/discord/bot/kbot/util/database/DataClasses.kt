@@ -1,4 +1,4 @@
-package me.ricky.discord.bot.kbot.util
+package me.ricky.discord.bot.kbot.util.database
 
 data class ServerData(
   val serverId: Long = 0,

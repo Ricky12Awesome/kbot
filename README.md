@@ -9,7 +9,7 @@ I'm making this for the fun of it. It's pretty much does what every other bot do
 
 This bot is going to be very configurable as well.
 
-**Latest Version**: 0.2.0
+**Latest Version**: 0.3.0
 
 # Commands
 - `test` - A test command to test stuff
@@ -29,7 +29,20 @@ This bot is going to be very configurable as well.
 - `changelog` - Gives you a link to change log. atm this page.
 - more coming soon...
 
+# TODO
+- Make commands permissions per-server
+- Enable/Disable commands
+- Add your own aliases to commands
+- Clean up code
+- and more coming soon!
+
 # Change Log
+- # 0.3.0
+  - Replay Handler added
+  - ImageGen added
+  - reorganized commands packages
+  - added command categories
+  - And a lot of other stuff
 - # 0.2.0
   - Lots of things. to lazy to make a changelog
   - fixed SQL stuff
