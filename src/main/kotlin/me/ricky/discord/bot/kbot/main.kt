@@ -50,7 +50,7 @@ const val TODO_PAGE = "https://github.com/Ricky12Awesome/kbot#todo"
 const val ISSUE_PAGE = "https://github.com/Ricky12Awesome/kbot/issues"
 const val COMMAND_PAGE = "https://github.com/Ricky12Awesome/kbot#commands"
 const val CHANGE_LOG = "https://github.com/Ricky12Awesome/kbot#change-log"
-const val VERSION = "0.3.1"
+const val VERSION = "0.3.2"
 val startTime: Long = System.currentTimeMillis()
 val gson: Gson = GsonBuilder().setPrettyPrinting().create()
 
@@ -99,9 +99,10 @@ fun main(args: Array<String>) {
     ChangeLogCommand(),
     SettingsCommand(replayHandler),
     MuteCommand(punishmentHandler),
-    InfoCommand(commandHandler.commands.size),
     HelpCommand(commandHandler.commands)
   )
+
+  commandHandler.register(InfoCommand(commandHandler.commands.size + 1))
 
   api.addMessageCreateListener(replayHandler)
   api.addMessageCreateListener(commandHandler)

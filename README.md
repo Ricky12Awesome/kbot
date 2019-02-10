@@ -9,7 +9,7 @@ I'm making this for the fun of it. It's pretty much does what every other bot do
 
 This bot is going to be very configurable as well.
 
-**Latest Version**: 0.3.0
+**Latest Version**: 0.3.2
 
 # Commands
 - `test` - A test command to test stuff
@@ -38,6 +38,8 @@ This bot is going to be very configurable as well.
 - and more coming soon!
 
 # Change Log
+- # 0.3.2
+  - Fixed info command giving incorrect command count.
 - # 0.3.1
   - Added todo command
 - # 0.3.0
