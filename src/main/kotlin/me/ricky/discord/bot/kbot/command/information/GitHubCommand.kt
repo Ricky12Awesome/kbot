@@ -13,7 +13,7 @@ class GitHubCommand : Command {
   override val category: CommandCategory = CommandCategory.INFORMATION
 
   override fun CommandEvent.onEvent() {
-    channel.send("Here's the link to the github page. $GITHUB_PAGE")
+    channel.send("Here's the link to the github page. <$GITHUB_PAGE>")
   }
 
 }

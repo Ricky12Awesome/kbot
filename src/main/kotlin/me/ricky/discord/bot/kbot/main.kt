@@ -11,6 +11,7 @@ import me.ricky.discord.bot.kbot.command.information.InfoCommand
 import me.ricky.discord.bot.kbot.command.information.ReportsCommand
 import me.ricky.discord.bot.kbot.command.information.RoleInfoCommand
 import me.ricky.discord.bot.kbot.command.information.StatsCommand
+import me.ricky.discord.bot.kbot.command.information.TODOCommand
 import me.ricky.discord.bot.kbot.command.information.UptimeCommand
 import me.ricky.discord.bot.kbot.command.information.UserInfoCommand
 import me.ricky.discord.bot.kbot.command.management.SettingsCommand
@@ -44,11 +45,12 @@ import java.nio.file.Paths
 import java.sql.Connection
 import java.sql.DriverManager
 
-const val COMMAND_PAGE = "https://github.com/Ricky12Awesome/kbot#commands"
 const val GITHUB_PAGE = "https://github.com/Ricky12Awesome/kbot"
+const val TODO_PAGE = "https://github.com/Ricky12Awesome/kbot#todo"
 const val ISSUE_PAGE = "https://github.com/Ricky12Awesome/kbot/issues"
+const val COMMAND_PAGE = "https://github.com/Ricky12Awesome/kbot#commands"
 const val CHANGE_LOG = "https://github.com/Ricky12Awesome/kbot#change-log"
-const val VERSION = "0.3.0"
+const val VERSION = "0.3.1"
 val startTime: Long = System.currentTimeMillis()
 val gson: Gson = GsonBuilder().setPrettyPrinting().create()
 
@@ -85,6 +87,7 @@ fun main(args: Array<String>) {
     Test(),
     XPCommand(),
     SayCommand(),
+    TODOCommand(),
     PurgeCommand(),
     StatsCommand(),
     UptimeCommand(),

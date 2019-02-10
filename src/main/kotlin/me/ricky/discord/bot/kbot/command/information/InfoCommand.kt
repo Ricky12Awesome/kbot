@@ -3,6 +3,7 @@ package me.ricky.discord.bot.kbot.command.information
 import me.ricky.discord.bot.kbot.CHANGE_LOG
 import me.ricky.discord.bot.kbot.GITHUB_PAGE
 import me.ricky.discord.bot.kbot.ISSUE_PAGE
+import me.ricky.discord.bot.kbot.TODO_PAGE
 import me.ricky.discord.bot.kbot.VERSION
 import me.ricky.discord.bot.kbot.command.Command
 import me.ricky.discord.bot.kbot.handler.CommandCategory
@@ -20,7 +21,7 @@ class InfoCommand(val commandCount: Int) : Command {
 
   override fun CommandEvent.onEvent() {
     channel.send(
-      title = "> Info",
+      title = "Info",
       description = "A Basic bot as of right now.",
       thumbnailUrl = api.yourself.avatarUrl,
       fields = listOf(
@@ -33,6 +34,7 @@ class InfoCommand(val commandCount: Int) : Command {
         inlineField("Server Prefix", prefix),
         inlineField("Uptime", shortFormattedTime(time = System.currentTimeMillis() - startTime)),
         inlineField("GitHub", GITHUB_PAGE),
+        inlineField("TODO", TODO_PAGE),
         inlineField("Change Log", CHANGE_LOG),
         inlineField("Report Bugs", ISSUE_PAGE)
       )

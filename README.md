@@ -27,6 +27,7 @@ This bot is going to be very configurable as well.
 - `xp` - *In Development*
 - `roleinfo` - Gives info about a role
 - `changelog` - Gives you a link to change log. atm this page.
+- `todo` - Gives you a link to the todo page. atm this page.
 - more coming soon...
 
 # TODO
@@ -37,6 +38,8 @@ This bot is going to be very configurable as well.
 - and more coming soon!
 
 # Change Log
+- # 0.3.1
+  - Added todo command
 - # 0.3.0
   - Replay Handler added
   - ImageGen added
