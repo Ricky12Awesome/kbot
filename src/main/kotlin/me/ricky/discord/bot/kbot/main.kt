@@ -3,6 +3,7 @@ package me.ricky.discord.bot.kbot
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import me.ricky.discord.bot.kbot.command.Command
+import me.ricky.discord.bot.kbot.command.`fun`.EightBallCommand
 import me.ricky.discord.bot.kbot.command.`fun`.SayCommand
 import me.ricky.discord.bot.kbot.command.information.ChangeLogCommand
 import me.ricky.discord.bot.kbot.command.information.GitHubCommand
@@ -21,6 +22,7 @@ import me.ricky.discord.bot.kbot.command.moderation.ReportCommand
 import me.ricky.discord.bot.kbot.command.other.XPCommand
 import me.ricky.discord.bot.kbot.handler.CommandEvent
 import me.ricky.discord.bot.kbot.handler.CommandHandler
+import me.ricky.discord.bot.kbot.handler.PrefixHandler
 import me.ricky.discord.bot.kbot.handler.PunishmentHandler
 import me.ricky.discord.bot.kbot.handler.ReplayHandler
 import me.ricky.discord.bot.kbot.handler.Usage
@@ -50,7 +52,7 @@ const val TODO_PAGE = "https://github.com/Ricky12Awesome/kbot#todo"
 const val ISSUE_PAGE = "https://github.com/Ricky12Awesome/kbot/issues"
 const val COMMAND_PAGE = "https://github.com/Ricky12Awesome/kbot#commands"
 const val CHANGE_LOG = "https://github.com/Ricky12Awesome/kbot#change-log"
-const val VERSION = "0.3.2"
+const val VERSION = "0.3.3"
 val startTime: Long = System.currentTimeMillis()
 val gson: Gson = GsonBuilder().setPrettyPrinting().create()
 
@@ -81,6 +83,7 @@ fun main(args: Array<String>) {
 
   val commandHandler = CommandHandler()
   val punishmentHandler = PunishmentHandler(api)
+  val prefixHandler = PrefixHandler()
   val replayHandler = ReplayHandler()
 
   commandHandler.registerAll(
@@ -97,6 +100,7 @@ fun main(args: Array<String>) {
     UserInfoCommand(),
     RoleInfoCommand(),
     ChangeLogCommand(),
+    EightBallCommand(),
     SettingsCommand(replayHandler),
     MuteCommand(punishmentHandler),
     HelpCommand(commandHandler.commands)
@@ -104,8 +108,9 @@ fun main(args: Array<String>) {
 
   commandHandler.register(InfoCommand(commandHandler.commands.size + 1))
 
-  api.addMessageCreateListener(replayHandler)
   api.addMessageCreateListener(commandHandler)
+  api.addMessageCreateListener(replayHandler)
+  api.addMessageCreateListener(prefixHandler)
 }
 
 class Test : Command {
@@ -113,7 +118,7 @@ class Test : Command {
   override val description: String = "A Simple test command for stuffs"
   override val aliases: List<String> = listOf("t", "testing")
   override val permission: PermissionType = PermissionType.ADMINISTRATOR
-  override val usage: Usage = usage(exact(1))
+  override val usage: Usage = usage(exact(1), required("type"))
 
   override fun CommandEvent.onEvent() {
     val type = NekoLife.endpoints.find { it == args[1] } ?: throw exception("Invalid endpoints")

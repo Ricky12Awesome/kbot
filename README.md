@@ -9,7 +9,7 @@ I'm making this for the fun of it. It's pretty much does what every other bot do
 
 This bot is going to be very configurable as well.
 
-**Latest Version**: 0.3.2
+**Latest Version**: 0.3.3
 
 # Commands
 - `test` - A test command to test stuff
@@ -26,8 +26,9 @@ This bot is going to be very configurable as well.
 - `settings` - Changes settings about the server
 - `xp` - *In Development*
 - `roleinfo` - Gives info about a role
-- `changelog` - Gives you a link to change log. atm this page.
-- `todo` - Gives you a link to the todo page. atm this page.
+- `changelog` - Gives you a link to change log. atm this page
+- `todo` - Gives you a link to the todo page. atm this page
+- `8ball` - Answers a yes or no question
 - more coming soon...
 
 # TODO
@@ -38,6 +39,10 @@ This bot is going to be very configurable as well.
 - and more coming soon!
 
 # Change Log
+- # 0.3.3
+  - Added 8ball command
+  - Added Mention bot to get prefix or run commands
+  - Removed "Please us prefix" if you typed a command with no prefix
 - # 0.3.2
   - Fixed info command giving incorrect command count.
 - # 0.3.1

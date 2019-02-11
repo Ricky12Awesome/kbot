@@ -68,6 +68,7 @@ fun User.toMember(server: Server): Member = MemberDelegate(
   roleColor = getRoleColor(server).value?.convert() ?: Color.TRANSPARENT
 )
 
+val User.tag get() = "<@!$id>"
 fun Member.toSQL() = SQLMember(this)
 fun Server.toSQL() = SQLServer(this)
 fun DiscordApi.getSQLServer(id: Long) = getServerById(id).value?.toSQL()

@@ -1,10 +1,11 @@
 package me.ricky.discord.bot.kbot.handler
 
 import me.ricky.discord.bot.kbot.command.Command
+import me.ricky.discord.bot.kbot.util.XPLevelHandler
 import me.ricky.discord.bot.kbot.util.database.SQLMember
 import me.ricky.discord.bot.kbot.util.database.SQLServer
-import me.ricky.discord.bot.kbot.util.XPLevelHandler
 import me.ricky.discord.bot.kbot.util.send
+import me.ricky.discord.bot.kbot.util.tag
 import me.ricky.discord.bot.kbot.util.toMember
 import me.ricky.discord.bot.kbot.util.toSQL
 import me.ricky.discord.bot.kbot.util.user
@@ -67,17 +68,15 @@ class CommandHandler : MessageCreateListener {
 
   private fun MessageCreateEvent.onEvent() {
     if (api.yourself == message.author.user) return
-    val server = (server.value ?: return).toSQL()
-    val prefix = server.data.prefix
     val channel = channel as? ServerTextChannel ?: return
+    val server = (server.value ?: return).toSQL()
     val user = (message.userAuthor.value ?: return).toMember(server).toSQL()
-    val args = message.content.split(" ")
-    val aliases = commandAliases[args[0].removePrefix(server.data.prefix)] ?: return
+    val prefix = server.data.prefix
+    val message = message.content.replaceFirst("${api.yourself.tag} ", prefix)
+    val args = message.split(" ")
+    val aliases = commandAliases[args[0].removePrefix(prefix)] ?: return
     val command = commands[aliases] ?: return
-    if (!args[0].startsWith(prefix)) {
-      channel.send("Please use prefix `$prefix` for commands.")
-      return
-    }
+    if (!args[0].startsWith(prefix)) return
     if (args.getOrNull(1) == "-h") {
       channel.send(command.help())
       return

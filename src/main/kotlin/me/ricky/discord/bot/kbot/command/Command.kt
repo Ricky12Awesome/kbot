@@ -45,7 +45,7 @@ interface Command {
    * @param last last index of argument
    */
   fun canRun(last: Int): Int {
-    if (usage.isEmpty()) return 0
+    if (usage.runsAt.isEmpty()) return 0
 
     usage.runsAt.forEach {
       val (index, type) = it
