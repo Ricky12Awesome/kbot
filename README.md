@@ -1,5 +1,7 @@
 # KBot
 
+**This project is discontinued, But I'll be making some similar soon.**
+
 A Discord Bot that is being made 
 in [Kotlin](https://kotlinlang.org/) 
 using [JavaCord](https://github.com/Javacord/Javacord) as the Discord API
